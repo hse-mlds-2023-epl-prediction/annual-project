@@ -1,0 +1,6 @@
+.venv
+/parsers/official/data
+/parsers/official/__pycache__
+/EDA/__pycache__
+/EDA/eda_data
+
