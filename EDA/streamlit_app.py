@@ -28,7 +28,7 @@ tab1, tab2, tab3 = st.tabs(["Игроки", "Клубы", "Игры"])
 
 df_pl = pd.read_csv('eda_data/players_stat.csv')
 df_cl = pd.read_csv('eda_data/clubs_stat.csv')
-df_gm = pd.read_csv('eda_data/games.csv')
+df_gm = pd.read_csv('eda_data/games.csv', low_memory=False)
 
 
 
