@@ -3,28 +3,6 @@ from catboost import CatBoostClassifier
 from sklearn.metrics import roc_auc_score as auc
 import numpy as np
 
-def split_data(data, label, target, year=2023):
-    #Input: data - dataframe
-    #       label - name feature where is season
-    #       target - namee target feature
-    #       year - year for split by validation part
-
-    #Output: x_train
-    #        y_train
-    #        x_val
-    #        y_val
-
-    train = data[data[label] != year]
-    val = data[data[label] == year]
-
-    y_train = train[target]
-    x_train = train.drop(target, axis=1)
-
-    y_val = val[target]
-    x_val = val.drop(target, axis=1)
-
-    return x_train, y_train, x_val, y_val
-
 
              
 

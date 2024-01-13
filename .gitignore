@@ -4,4 +4,5 @@
 /EDA/official/__pycache__
 /EDA/official/eda_data
 /ML/official/catboost/catboost_info
+/ML/official/prepare_data/data
 .idea
