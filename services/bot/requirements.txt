@@ -2,3 +2,9 @@ aiogram<4.0
 python-dotenv==1.0.0
 uvicorn==0.24.0.post1
 aiohttp
+pydantic_settings
+pydantic
+tabulate
+requests
+pandas
+prettytable

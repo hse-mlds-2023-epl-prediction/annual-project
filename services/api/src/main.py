@@ -4,4 +4,4 @@ app = FastAPI()
 
 @app.get('/')
 def root():
-    return "hi"
+    return "222"

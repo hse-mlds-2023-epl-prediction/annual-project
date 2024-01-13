@@ -1,6 +1,7 @@
 import logging
 from aiogram import Bot, Dispatcher, types, F
 import asyncio
+import aiohttp
 from aiogram.filters import Command
 from aiogram.enums.parse_mode import ParseMode
 from config_reader import config
@@ -47,7 +48,14 @@ async def games_ten(message: types.Message):
     df = tabulate(df, headers='keys', tablefmt='fancy_grid')
     await message.answer(df, parse_mode='Markdown')
 
+@dp.message(F.text, Command('start'))
+async def start(message: types.Message):
+    async with aiohttp.ClientSession() as session:
+        async with session.get('http://localhost:80/') as resp:
+            print(resp.status)
+            text = await resp.text()
 
+            await message.answer(f"Hello world {text}!")
 
 async def main():
     logging.basicConfig(level=logging.DEBUG)
