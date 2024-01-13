@@ -11,7 +11,8 @@ from features import headers, col_start_player, col_start_club, col_id_season, c
 from func import flatten_dict, get_col_dict, pars_dictline, list_to_dict, pars_dictfeature
 
 
-
+dir = 'data/'
+num_season = 5
 
 page = 0
 
@@ -54,7 +55,7 @@ df_start_player = pd.DataFrame(data, columns=col_start_player.values())
 df_start_player['id'] = df_start_player['id'].astype(int)
 
 #save DataFrame csv
-filepath = Path('pars/parsing EPL/official site/data/df_start_player.csv')  
+filepath = Path(dir +'/df_start_player.csv')  
 filepath.parent.mkdir(parents=True, exist_ok=True)  
 df_start_player.to_csv(filepath, index=False)
 
@@ -78,7 +79,7 @@ df_start_club = pd.DataFrame(data, columns=col_start_club.values())
 df_start_club['club_id'] = df_start_club['club_id'].astype('int')
 
 #save DataFrame csv
-filepath = Path('pars/parsing EPL/official site/data/df_start_club.csv')  
+filepath = Path(dir + '/df_start_club.csv')  
 filepath.parent.mkdir(parents=True, exist_ok=True)  
 df_start_club.to_csv(filepath, index=False)
 
@@ -115,7 +116,7 @@ stadium_col = [
 df_stadium = pd.DataFrame(stadium_list, columns=stadium_col)
 df_stadium[['club_id', 'stadium_id']] = df_stadium[['club_id', 'stadium_id']].astype(int)
 
-filepath = Path('pars/parsing EPL/official site/data/df_stadium.csv')  
+filepath = Path(dir + '/df_stadium.csv')  
 filepath.parent.mkdir(parents=True, exist_ok=True)  
 df_stadium.to_csv(filepath, index=False)
 #===================================get id seasons===================================
@@ -133,7 +134,7 @@ id_season = pd.DataFrame(data, columns=col_id_season.values())
 #id save as int
 id_season['id'] = id_season['id'].astype(int)
 #save DataFrame csv
-filepath = Path('pars/parsing EPL/official site/data/id_season.csv')  
+filepath = Path(dir + '/id_season.csv')  
 filepath.parent.mkdir(parents=True, exist_ok=True)  
 id_season.to_csv(filepath)
 
@@ -144,7 +145,7 @@ player_id = df_start_player['id'].unique()
 
 #========================get info about club========================================
 response_url = 'https://footballapi.pulselive.com/football/stats/team'
-seasons = id_season['id'].iloc[:10]
+seasons = id_season['id'].iloc[:num_season]
 iter = club_id
 main_info = 'entity'
 stats = 'stats'
@@ -154,7 +155,7 @@ data = pars_dictline(list_club, col_club_stat)
 club_stat = pd.DataFrame(data, columns=col_club_stat.values())
 
 #save DataFrame csv
-filepath = Path('pars/parsing EPL/official site/data/club_stat.csv')  
+filepath = Path(dir + '/club_stat.csv')  
 filepath.parent.mkdir(parents=True, exist_ok=True)  
 club_stat.to_csv(filepath, index=False)
 
@@ -169,7 +170,7 @@ data = pars_dictline(list_player, col_player_stat)
 player_stat = pd.DataFrame(data, columns=col_player_stat.values())
 
 #save DataFrame csv
-filepath = Path('pars/parsing EPL/official site/data/player_stat.csv')
+filepath = Path(dir + '/player_stat.csv')
 filepath.parent.mkdir(parents=True, exist_ok=True)  
 player_stat.to_csv(filepath, index=False)
 
@@ -191,7 +192,7 @@ df_games = pd.DataFrame()
 
 s = requests.Session()
 
-for season in id_season['id'].iloc[:10]:
+for season in id_season['id'].iloc[:num_season]:
 
     params['compSeasons'] = season
     response = s.get('https://footballapi.pulselive.com/football/fixtures',  headers=headers, params=params)
@@ -206,7 +207,7 @@ for season in id_season['id'].iloc[:10]:
 df_games['id'].astype(int)
 
 #save DataFrame csv
-filepath = Path('pars/parsing EPL/official site/data/df_games.csv')
+filepath = Path(dir + '/df_games.csv')
 filepath.parent.mkdir(parents=True, exist_ok=True)  
 df_games.to_csv(filepath, index=False)
 
@@ -268,6 +269,6 @@ data = pars_dictline(result, col_main)
 df_main = pd.DataFrame(data, columns=col_main.values())
 
 #save DataFrame csv
-filepath = Path('pars/parsing EPL/official site/data/df_main.csv')
+filepath = Path(dir + '/df_main.csv')
 filepath.parent.mkdir(parents=True, exist_ok=True)  
 df_main.to_csv(filepath, index=False)
