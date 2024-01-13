@@ -1,0 +1,18 @@
+FROM python:3.10-slim
+
+RUN pip install --upgrade pip
+RUN pip install pipenv
+
+WORKDIR /streamlit_eda
+
+COPY requirements.txt .
+
+RUN pip install -r requirements.txt
+
+COPY streamlit_app.py .
+COPY feat.py .
+COPY eda_data eda_data
+
+EXPOSE 8501
+
+ENTRYPOINT ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
