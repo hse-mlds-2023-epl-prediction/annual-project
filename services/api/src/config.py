@@ -1,7 +1,7 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
-    footbalapi_url: str
+    footbalapi_url: str = 'https://footballapi.pulselive.com/football/fixtures?comps=1&teams=1,2,127,130,131,43,4,6,7,34,10,163,11,12,23,15,18,21,25,38&compSeasons=578&page=0&pageSize=12&sort=asc&statuses=U,L&altIds=true'
 
     headers: dict = {
         'authority': 'footballapi.pulselive.com',

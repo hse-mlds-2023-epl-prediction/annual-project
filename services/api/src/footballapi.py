@@ -1,9 +1,15 @@
 from datetime import datetime, timedelta
 import requests
+from pydantic import BaseModel
 from collections import defaultdict
 import pandas as pd
 
 from src.config import settings
+
+class GameInfo(BaseModel):
+    Home: str
+    Away: str
+    Ground: str
 
 def make_request():
     s = requests.Session()
@@ -53,7 +59,7 @@ def get_games_tomorrow():
 
     return df
 
-def get_some_games(n: int):
+def get_game_by_limit(n: int):
     df = get_games()
     df = df.iloc[:n, :].drop('gameDate', axis=1)
     df.reset_index(drop=True, inplace=True)

@@ -4,3 +4,8 @@
 ```
 docker-compose -f docker-compose.yml -f docker-compose.development.yml up
 ```
+
+## Команда для запуска сервисов в production окружении
+```
+docker-compose -f docker-compose.yml up
+```
