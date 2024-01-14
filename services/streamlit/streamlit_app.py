@@ -4,17 +4,19 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from feat import feature_list
 import numpy as np
-
+import os
+from api_client import make_request
+import requests
 
 
 feature_dict = {i[0][7:]:i for i in feature_list}
 
-st.header("EDA EPL")
+st.header("HSE EPL ML Project")
 
 def choose_season():
     appointment = st.slider(
     "Выберите сезоны:",
-    min_value=2020,
+    min_value=2019,
     max_value=2023,
     value=(2021, 2023),
     step=1)
@@ -27,9 +29,9 @@ season_player = choose_season()
 
 tab1, tab2, tab3, tab4 = st.tabs(["Игроки", "Клубы", "Игры", "Предсказания результатов матчей"])
 
-df_pl = pd.read_csv('../data/players_stat.csv')
-df_cl = pd.read_csv('../data/clubs_stat.csv')
-df_gm = pd.read_csv('../data/games.csv', low_memory=False)
+df_pl = pd.read_csv(os.path.join(os.path.dirname(__file__)) + '/data/players_stat.csv')
+df_cl = pd.read_csv(os.path.join(os.path.dirname(__file__)) + '/data/clubs_stat.csv')
+df_gm = pd.read_csv(os.path.join(os.path.dirname(__file__)) + '/data/games.csv', low_memory=False)
 
 
 
@@ -300,3 +302,10 @@ with tab3:
         ax.set_xlabel('Домашняя команда')
         ax.set_ylabel('Гостевая команда')
         st.pyplot(fig)
+
+    with tab4:
+        r = requests.get('http://localhost/games-today').json()
+
+        df_req = pd.DataFrame(r)
+
+        st.write(df_req)
