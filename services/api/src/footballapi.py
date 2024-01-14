@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 import os
-
+import pickle
 import requests
 from pydantic import BaseModel
 from collections import defaultdict
