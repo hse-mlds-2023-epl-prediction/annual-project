@@ -19,3 +19,19 @@ async def games_today() -> List[GameInfo]:
 async def games_tomorrow() -> List[GameInfo]:
     data = get_games_tomorrow()
     return data.to_dict('records')
+
+@app.get('/stats')
+async def stats():
+    return [
+        {
+            'team': 'Arsenal',
+            'games': 20,
+            'goals': 14,
+
+        },
+        {
+            'team': 'Spurs',
+            'games': 19,
+            'goals': 12
+        }
+    ]

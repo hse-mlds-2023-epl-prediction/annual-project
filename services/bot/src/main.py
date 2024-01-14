@@ -5,7 +5,7 @@ from aiogram.filters import Command
 from aiogram.enums.parse_mode import ParseMode
 from config_reader import config
 from api_client import make_request
-from table_formator import format_games_table
+from table_formator import format_games_table, format_stats_table
 
 bot = Bot(token=config.bot_token.get_secret_value())
 dp = Dispatcher()
@@ -39,15 +39,29 @@ async def games_ten(message: types.Message):
     else:
         await message.answer('No games')
 
+@dp.message(F.text, Command('stats'))
+async def games_ten(message: types.Message):
+    json = await make_request('/stats')
+
+    if len(json):
+        table = format_stats_table(json)
+        await message.answer(f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
+    else:
+        await message.answer('No stats')
+
 @dp.message(F.text, Command('start'))
 async def start(message: types.Message):
     await message.answer(
         f"<b>Привет!</b>\n\n"
         f"Это tg bot команды проекта «Предсказательные модели для игроков и команд EPL»\n\n"
         f"Список доступных команд:\n"
+        f"/stats - Статистика команд\n"
         f"/games_ten - Посмотреть 10 следующих матчей\n"
         f"/games_today - Посмотреть матчи на сегодня\n"
-        f"/games_tomorrow - Посмотреть матчи на завтра\n",
+        f"/games_tomorrow - Посмотреть матчи на завтра\n"
+        f"/predict_games_ten - Предсказать 10 следующих матчей\n"
+        f"/predict_games_today - Предсказать матчи на сегодня\n"
+        f"/predict_games_tomorrow - Предсказать матчи на завтра\n",
         parse_mode="HTML"
     )
 
