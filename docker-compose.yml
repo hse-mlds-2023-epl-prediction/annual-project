@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  api:
+    build: ./services/api
+    command: uvicorn src.main:app --reload --port 80 --host "0.0.0.0"
+    ports:
+      - 80:80
+  bot:
+    build: ./services/bot
+    command: python ./src/main.py
+
+    network_mode: host
+
+    depends_on:
+      - api

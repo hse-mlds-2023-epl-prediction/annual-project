@@ -4,55 +4,70 @@ import asyncio
 from aiogram.filters import Command
 from aiogram.enums.parse_mode import ParseMode
 from config_reader import config
-from tabulate import tabulate
-from app import game_today, game_tomorrow, return_game
-from prettytable import PrettyTable
-import pandas as pd
-
+from api_client import make_request
+from table_formator import format_games_table, format_stats_table
 
 bot = Bot(token=config.bot_token.get_secret_value())
 dp = Dispatcher()
 
-
 @dp.message(F.text, Command('games_today'))
 async def games_today(message: types.Message):
-    df = game_today()
-    df.reset_index(drop=True, inplace=True)
-
-    if df.shape[0] != 0:
-        df = tabulate(df, headers='keys', tablefmt='fancy_grid')
-        await message.answer(df, parse_mode='Markdown')
+    json = await make_request('/games-today')
+    if len(json):
+        table = format_games_table(json)
+        await message.answer(f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
     else:
         await message.answer('No games today')
 
-
 @dp.message(F.text, Command('games_tomorrow'))
 async def games_tomorrow(message: types.Message):
-    df = game_tomorrow()
-    df.reset_index(drop=True, inplace=True)
+    json = await make_request('/games-tomorrow')
 
-    if df.shape[0] != 0:
-        df = tabulate(df, headers='keys', tablefmt='fancy_grid')
-        await message.answer(df, parse_mode='Markdown')
+    if len(json):
+        table = format_games_table(json)
+        await message.answer(f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
     else:
         await message.answer('No games tomorrow')
 
-
 @dp.message(F.text, Command('games_ten'))
 async def games_ten(message: types.Message):
-    df = return_game()
-    df = df.iloc[:10, :].drop('gameDate', axis=1)
-    df.reset_index(drop=True, inplace=True)
+    json = await make_request('/games?limit=10')
 
-    df = tabulate(df, headers='keys', tablefmt='fancy_grid')
-    await message.answer(df, parse_mode='Markdown')
+    if len(json):
+        table = format_games_table(json)
+        await message.answer(f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
+    else:
+        await message.answer('No games')
 
+@dp.message(F.text, Command('stats'))
+async def games_ten(message: types.Message):
+    json = await make_request('/stats')
 
+    if len(json):
+        table = format_stats_table(json)
+        await message.answer(f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
+    else:
+        await message.answer('No stats')
+
+@dp.message(F.text, Command('start'))
+async def start(message: types.Message):
+    await message.answer(
+        f"<b>Привет!</b>\n\n"
+        f"Это tg bot команды проекта «Предсказательные модели для игроков и команд EPL»\n\n"
+        f"Список доступных команд:\n"
+        f"/stats - Статистика команд\n"
+        f"/games_ten - Посмотреть 10 следующих матчей\n"
+        f"/games_today - Посмотреть матчи на сегодня\n"
+        f"/games_tomorrow - Посмотреть матчи на завтра\n"
+        f"/predict_games_ten - Предсказать 10 следующих матчей\n"
+        f"/predict_games_today - Предсказать матчи на сегодня\n"
+        f"/predict_games_tomorrow - Предсказать матчи на завтра\n",
+        parse_mode="HTML"
+    )
 
 async def main():
     logging.basicConfig(level=logging.DEBUG)
     await dp.start_polling(bot)
-
 
 if __name__ == '__main__':
     asyncio.run(main())
