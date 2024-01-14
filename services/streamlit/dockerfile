@@ -11,7 +11,8 @@ RUN pip install -r requirements.txt
 
 COPY streamlit_app.py .
 COPY feat.py .
-COPY eda_data eda_data
+COPY api_client.py .
+COPY data data
 
 EXPOSE 8501
 
