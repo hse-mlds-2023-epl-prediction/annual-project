@@ -19,3 +19,5 @@ websockets==12.0
 requests
 pydantic_settings
 prettytable
+pandas
+catboost

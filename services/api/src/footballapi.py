@@ -1,19 +1,21 @@
 from datetime import datetime, timedelta
-
-
+import os
 import requests
 from pydantic import BaseModel
 from collections import defaultdict
 import pandas as pd
-from cfg import headers
 import numpy as np
-
+import pickle
 from src.config import settings
 
 class GameInfo(BaseModel):
     Home: str
     Away: str
     Ground: str
+
+class GameInfoWithPrediction(GameInfo):
+    Predict: int
+    Proba: float
 
 def make_request():
     s = requests.Session()
@@ -64,23 +66,20 @@ def get_games_tomorrow():
     return df
 
 def prepare(df):
-    df_mean = pd.read_csv('../../../ML/official/prepared_data/data/df_mean.csv')
-    df_lag = pd.read_csv('../../../ML/official/prepared_data/data//df_lag.csv')
-
-    df = df.merge(df_mean, left_on='teams_team_1_name', right_on='club_name')
-    df = df.merge(df_mean, left_on='teams_team_2_name', right_on='club_name', suffixes=('_team_1', '_team_2'))
+    df_mean = pd.read_csv(os.path.join(os.path.dirname(__file__)) + '/model/df_mean.csv')
+    df_lag = pd.read_csv(os.path.join(os.path.dirname(__file__)) + '/model/df_lag.csv')
+    df = df.merge(df_mean, left_on='teams_team_1_name', right_on='club_name', how='left')
+    df = df.merge(df_mean, left_on='teams_team_2_name', right_on='club_name', suffixes=('_team_1', '_team_2'), how='left')
     df['gameweek_compSeason_label'] = df['gameweek_compSeason_label'].astype('int')
-
     df = pd.merge(df, df_lag, left_on=['teams_team_1_name', 'gameweek_compSeason_label'], right_on=['club_name', 'season'], how='left')
     df = pd.merge(df, df_lag, left_on=['teams_team_2_name', 'gameweek_compSeason_label'], right_on=['club_name', 'season'], how='left', suffixes=('_lag_team1', '_lag_team2'))
 
     df.drop(['season_lag_team2', 'season_lag_team1', 'club_name_lag_team1', 'club_name_lag_team2', 'gameDate'], axis=1, inplace=True)
 
-    import pickle
-    with open('../../../ML/official/catboost/pickle/catboost.pickle', 'rb') as f:
+    with open(os.path.join(os.path.dirname(__file__)) + '/model/catboost.pickle', 'rb') as f:
         model = pickle.load(f)
 
-    with open('../../../ML/official/catboost/pickle/name_cols.pickle', 'rb') as f:
+    with open(os.path.join(os.path.dirname(__file__)) + '/model/name_cols.pickle', 'rb') as f:
         name_cols = pickle.load(f)
 
     df = df[name_cols]
@@ -89,33 +88,44 @@ def prepare(df):
     return model.predict(df), model.predict_proba(df)
 
 
-
-def game_tomorrow_predict():
-    df = resp()
+def get_games_tomorrow_predict():
+    df = get_dataframe()
     tomorrow = datetime.now().date() + timedelta(days=1)
 
     df = df[df['gameDate'].dt.date == tomorrow]
 
     predict, proba = prepare(df)
-    df = game_tomorrow()
-    df['predict'] = predict
-    df['proba'] = np.max(proba, axis=1, keepdims=True)
+    df = get_games_tomorrow()
+    df['Predict'] = predict
+    df['Proba'] = np.max(proba, axis=1, keepdims=True)
 
     return df
 
 
-def game_today_predict():
-    df = resp()
+def get_games_today_predict():
+    df = get_dataframe()
     today = datetime.now().date()
 
     df = df[df['gameDate'].dt.date == today]
 
     predict, proba = prepare(df)
-    df = game_today()
-    df['predict'] = predict
-    df['proba'] = np.max(proba, axis=1, keepdims=True)
+    df = get_games_today()
+    df['Predict'] = predict
+    df['Proba'] = np.max(proba, axis=1, keepdims=True)
 
     return df
+
+def get_games_predict():
+    df = get_dataframe()
+    df = df.iloc[:10, :]
+    df.reset_index(drop=True, inplace=True)
+    predict, proba = prepare(df)
+    df = get_game_by_limit(10)
+    df['Predict'] = predict
+    df['Proba'] = np.max(proba, axis=1, keepdims=True)
+
+    return df
+
 def get_game_by_limit(n: int):
     df = get_games()
     df = df.iloc[:n, :].drop('gameDate', axis=1)
