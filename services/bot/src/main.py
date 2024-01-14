@@ -1,7 +1,6 @@
 import logging
 from aiogram import Bot, Dispatcher, types, F
 import asyncio
-import aiohttp
 from aiogram.filters import Command
 from aiogram.enums.parse_mode import ParseMode
 from config_reader import config
@@ -42,12 +41,15 @@ async def games_ten(message: types.Message):
 
 @dp.message(F.text, Command('start'))
 async def start(message: types.Message):
-    async with aiohttp.ClientSession() as session:
-        async with session.get(config.api_url) as resp:
-            print(resp.status)
-            text = await resp.text()
-
-            await message.answer(f"Hello world {text}!")
+    await message.answer(
+        f"<b>Привет!</b>\n\n"
+        f"Это tg bot команды проекта «Предсказательные модели для игроков и команд EPL»\n\n"
+        f"Список доступных команд:\n"
+        f"/games_ten - Посмотреть 10 следующих матчей\n"
+        f"/games_today - Посмотреть матчи на сегодня\n"
+        f"/games_tomorrow - Посмотреть матчи на завтра\n",
+        parse_mode="HTML"
+    )
 
 async def main():
     logging.basicConfig(level=logging.DEBUG)
