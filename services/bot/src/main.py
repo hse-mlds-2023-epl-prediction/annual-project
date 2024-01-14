@@ -65,6 +65,28 @@ async def start(message: types.Message):
         parse_mode="HTML"
     )
 
+@dp.message(F.text, Command('tomorrow_predict'))
+async def tomorrow_predict(message: types.Message):
+    df = game_tomorrow_predict()
+
+    if df.shape[0] != 0:
+        df = tabulate(df, headers='keys', tablefmt='fancy_grid')
+        await message.answer(df, parse_mode='Markdown')
+    else:
+        await message.answer('No games tomorrow')
+
+
+@dp.message(F.text, Command('today_predict'))
+async def today_predict(message: types.Message):
+    df = game_today_predict()
+
+    if df.shape[0] != 0:
+        df = tabulate(df, headers='keys', tablefmt='fancy_grid')
+        await message.answer(df, parse_mode='Markdown')
+    else:
+        await message.answer('No games tomorrow')
+
+
 async def main():
     logging.basicConfig(level=logging.DEBUG)
     await dp.start_polling(bot)
