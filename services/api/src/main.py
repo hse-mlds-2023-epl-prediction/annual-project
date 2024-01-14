@@ -2,6 +2,7 @@ from typing import List
 from fastapi import FastAPI
 
 from src.footballapi import get_game_by_limit, get_games_tomorrow, get_games_today, get_games_today_predict, get_games_tomorrow_predict, get_games_predict, GameInfo, GameInfoWithPrediction
+from src.stats import stats, StatInfo
 
 app = FastAPI()
 
@@ -36,17 +37,6 @@ async def games_tomorrow_predict() -> List[GameInfoWithPrediction]:
     return data.to_dict('records')
 
 @app.get('/stats')
-async def stats():
-    return [
-        {
-            'team': 'Arsenal',
-            'games': 20,
-            'goals': 14,
-
-        },
-        {
-            'team': 'Spurs',
-            'games': 19,
-            'goals': 12
-        }
-    ]
+async def get_stats() -> List[StatInfo]:
+    data = await stats()
+    return data.to_dict('records')
