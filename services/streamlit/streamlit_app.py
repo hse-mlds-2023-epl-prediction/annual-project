@@ -304,7 +304,7 @@ with tab3:
         st.pyplot(fig)
 
     with tab4:
-        r = requests.get('http://localhost/games-today').json()
+        r = requests.get('http://localhost/games-predict').json()
 
         df_req = pd.DataFrame(r)
 
