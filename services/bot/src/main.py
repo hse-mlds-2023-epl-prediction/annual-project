@@ -5,7 +5,7 @@ from aiogram.filters import Command
 from aiogram.enums.parse_mode import ParseMode
 from config_reader import config
 from tabulate import tabulate
-from app import game_today, game_tomorrow, return_game
+from app import game_today, game_tomorrow, return_game, game_tomorrow_predict, game_today_predict
 from prettytable import PrettyTable
 import pandas as pd
 
@@ -47,6 +47,28 @@ async def games_ten(message: types.Message):
     df = tabulate(df, headers='keys', tablefmt='fancy_grid')
     await message.answer(df, parse_mode='Markdown')
 
+
+
+@dp.message(F.text, Command('tomorrow_predict'))
+async def tomorrow_predict(message: types.Message):
+    df = game_tomorrow_predict()
+
+    if df.shape[0] != 0:
+        df = tabulate(df, headers='keys', tablefmt='fancy_grid')
+        await message.answer(df, parse_mode='Markdown')
+    else:
+        await message.answer('No games tomorrow')
+
+
+@dp.message(F.text, Command('today_predict'))
+async def today_predict(message: types.Message):
+    df = game_today_predict()
+
+    if df.shape[0] != 0:
+        df = tabulate(df, headers='keys', tablefmt='fancy_grid')
+        await message.answer(df, parse_mode='Markdown')
+    else:
+        await message.answer('No games tomorrow')
 
 
 async def main():
