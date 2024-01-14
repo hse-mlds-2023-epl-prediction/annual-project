@@ -20,3 +20,4 @@ requests
 pydantic_settings
 prettytable
 pandas
+catboost
