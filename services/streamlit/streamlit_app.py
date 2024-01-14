@@ -306,6 +306,8 @@ with tab3:
     with tab4:
         r = requests.get('http://localhost/games-predict').json()
 
+        st.subheader('Предсказание ближайщих 10 матчей')
+
         df_req = pd.DataFrame(r)
 
         st.write(df_req)
