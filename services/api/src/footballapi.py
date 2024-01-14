@@ -5,7 +5,6 @@ import requests
 from pydantic import BaseModel
 from collections import defaultdict
 import pandas as pd
-from cfg import headers
 import numpy as np
 
 from src.config import settings
