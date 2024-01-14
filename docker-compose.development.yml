@@ -1,0 +1,9 @@
+services:
+  api:
+    volumes:
+      - ./services/api/src:/code/src
+  bot:
+    volumes:
+      - ./services/bot/src:/code/src
+    command: nodemon ./src/main.py
+

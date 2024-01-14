@@ -2,23 +2,31 @@ from datetime import datetime, timedelta
 
 
 import requests
+from pydantic import BaseModel
 from collections import defaultdict
 import pandas as pd
 from cfg import headers
 import numpy as np
 
-def get_data():
+from src.config import settings
+
+class GameInfo(BaseModel):
+    Home: str
+    Away: str
+    Ground: str
+
+def make_request():
     s = requests.Session()
     response = s.get(
-        'https://footballapi.pulselive.com/football/fixtures?comps=1&teams=1,2,127,130,131,43,4,6,7,34,10,163,11,12,23,15,18,21,25,38&compSeasons=578&page=0&pageSize=12&sort=asc&statuses=U,L&altIds=true',
-        headers=headers,
+        settings.footbalapi_url,
+        headers=settings.headers,
     )
     data = response.json()['content']
+
     return data
 
-
-def resp():
-    r = get_data()
+def get_dataframe():
+    r = make_request()
     games = defaultdict(list)
     for game in r:
         games['gameweek_gameweek'].append(game['gameweek']['gameweek'])
@@ -35,21 +43,21 @@ def resp():
 
     return df
 
-def return_game():
-    df = resp()
+def get_games():
+    df = get_dataframe()
     df = df[['gameDate', 'teams_team_1_name', 'teams_team_2_name', 'ground_name']]
     df.columns = ['gameDate', 'Home', 'Away', 'Ground']
     return df
 
-def game_today():
-    df = return_game()
+def get_games_today():
+    df = get_games()
     today = datetime.now().date()
     df = df[df['gameDate'].dt.date == today].drop('gameDate', axis=1)
 
     return df
 
-def game_tomorrow():
-    df = return_game()
+def get_games_tomorrow():
+    df = get_games()
     tomorrow = datetime.now().date() + timedelta(days=1)
     df = df[df['gameDate'].dt.date == tomorrow].drop('gameDate', axis=1)
 
@@ -106,5 +114,11 @@ def game_today_predict():
     df = game_today()
     df['predict'] = predict
     df['proba'] = np.max(proba, axis=1, keepdims=True)
+
+    return df
+def get_game_by_limit(n: int):
+    df = get_games()
+    df = df.iloc[:n, :].drop('gameDate', axis=1)
+    df.reset_index(drop=True, inplace=True)
 
     return df
