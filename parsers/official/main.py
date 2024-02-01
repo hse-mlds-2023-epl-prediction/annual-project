@@ -12,7 +12,7 @@ from func import flatten_dict, get_col_dict, pars_dictline, list_to_dict, pars_d
 
 
 dir = 'data/'
-num_season = 5
+num_season = 10
 
 page = 0
 
