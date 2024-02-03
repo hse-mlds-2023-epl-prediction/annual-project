@@ -6,9 +6,9 @@ from bs4 import BeautifulSoup
 from time import sleep
 from pathlib import Path  
 
-from features import headers, col_start_player, col_start_club, col_id_season, col_club_stat, col_player_stat, col_games, col_main, id_stadium
+from features import headers, col_start_player, col_start_club, col_id_season, col_club_stat, col_player_stat, col_games, team_id, col_main, id_stadium
 
-from func import flatten_dict, get_col_dict, pars_dictline, list_to_dict, pars_dictfeature
+from func import flatten_dict, pars_dictline, list_to_dict, pars_dictfeature
 
 
 dir = 'data/'
@@ -263,6 +263,80 @@ for id in match_id: #iter for each match
     if count % 100 == 0:
         print(count)
     result.append(dict_stats)
+
+
+#Get dataframe players for team and managers
+params = {
+    'pageSize': '30',
+    'compSeasons': '578',
+    'altIds': 'true',
+    'page': '0',
+    'type': 'player',
+}    
+s = requests.Session()
+
+players = {
+            'season': [],
+            'team': [],
+            'player_id': []
+        }
+
+officials = {
+            'season': [],
+            'team': [],
+            'name': [],
+            'role': [],
+            'age': []
+            }
+
+for id_s in tqdm(list(id_season['id'][:num_season])):
+    for id_t in team_id:
+
+        response = s.get(
+        f'https://footballapi.pulselive.com/football/teams/{id_t}/compseasons/{id_s}/staff',
+        params=params,
+        headers=headers,
+        )
+
+        if response.status_code != 200:
+            continue
+
+        season = response.json()['compSeason']['label'].split('/')[0]
+        team = response.json()['team']['club']['name']
+
+
+
+        for player in response.json()['players']:
+            player_id = player.get('playerId', None)
+
+            players['season'].append(season)
+            players['team'].append(team)
+            players['player_id'].append(player_id)
+
+
+        for official in response.json().get('officials', None):
+            role = official.get('role', None)
+            name = official['name']['display']
+            age = int(official['age'].split()[0]) if 'age' in official else None
+
+            officials['season'].append(season)
+            officials['team'].append(team)
+            officials['name'].append(name)
+            officials['role'].append(role)
+            officials['age'].append(age)
+
+player_team = pd.DataFrame(players)
+officials_team = pd.DataFrame(officials)
+
+#save DataFrame csv
+filepath = Path(dir + '/player_team.csv')
+filepath.parent.mkdir(parents=True, exist_ok=True)  
+player_team.to_csv(filepath, index=False)
+
+filepath = Path(dir + '/officials_team.csv')
+filepath.parent.mkdir(parents=True, exist_ok=True)  
+officials_team.to_csv(filepath, index=False)
+
 
 
 data = pars_dictline(result, col_main)
