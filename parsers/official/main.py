@@ -266,20 +266,39 @@ for id in match_id: #iter for each match
 
 
 #Get dataframe players for team and managers
-params = {
-    'pageSize': '30',
-    'compSeasons': '578',
-    'altIds': 'true',
-    'page': '0',
-    'type': 'player',
-}    
+ 
 s = requests.Session()
 
 players = {
             'season': [],
             'team': [],
-            'player_id': []
+            'player_id': [],
+            'position': [],
+            'name': [],
+            'appearances': [],
+            'height': [],
+            'weight': [],
+            'goals': [],
+            'assists': [],
+            'tackles': [],
+            'shots': [],
+            'keyPasses': [],
+            'cleanSheets': [],
         }
+
+goalkippers = {
+            'season': [],
+            'team': [],
+            'player_id': [],
+            'position': [],
+            'name': [],
+            'appearances': [],
+            'height': [],
+            'weight': [],
+            'cleanSheets': [],
+            'saves': [],
+            'goalsConceded': [],
+            }
 
 officials = {
             'season': [],
@@ -289,8 +308,19 @@ officials = {
             'age': []
             }
 
-for id_s in tqdm(list(id_season['id'][:num_season])):
+
+
+
+for id_s in tqdm(list(id_season['id'][:10])):
     for id_t in team_id:
+
+        params = {
+        'pageSize': '30',
+        'compSeasons': id_s,
+        'altIds': 'true',
+        'page': '0',
+        'type': 'player',
+        }   
 
         response = s.get(
         f'https://footballapi.pulselive.com/football/teams/{id_t}/compseasons/{id_s}/staff',
@@ -306,12 +336,48 @@ for id_s in tqdm(list(id_season['id'][:num_season])):
 
 
 
-        for player in response.json()['players']:
-            player_id = player.get('playerId', None)
 
-            players['season'].append(season)
-            players['team'].append(team)
-            players['player_id'].append(player_id)
+        for player in response.json()['players']:
+            appearances = player['appearances']
+
+            if appearances == 0:
+                continue
+            player_id = player.get('playerId', None)
+            position = player['info']['position'] if 'position' in player['info'] else None
+
+            if position != 'G':                
+                
+                players['season'].append(season)
+                players['team'].append(team)
+                players['player_id'].append(player_id)
+                players['position'].append(position)
+                players['height'].append(player.get('height', None))
+                players['weight'].append(player.get('weight', None))
+                players['appearances'].append(appearances)
+                players['name'].append(player['name']['display'])
+                players['goals'].append(player.get('goals', None))
+                players['assists'].append(player.get('assists', None))
+                players['tackles'].append(player.get('tackles', None))
+                players['shots'].append(player.get('shots', None))
+                players['keyPasses'].append(player.get('keyPasses', None))
+                players['cleanSheets'].append(player.get('cleanSheets', None))
+
+
+            if position == 'G': 
+                goalkippers['season'].append(season)
+                goalkippers['team'].append(team)
+                goalkippers['player_id'].append(player_id)
+                goalkippers['position'].append(position)
+                goalkippers['height'].append(player.get('height', None))
+                goalkippers['weight'].append(player.get('weight', None))
+                goalkippers['appearances'].append(appearances)
+                goalkippers['name'].append(player['name']['display'])
+                goalkippers['cleanSheets'].append(player.get('cleanSheets', None))
+                goalkippers['saves'].append(player.get('saves', None))
+                goalkippers['goalsConceded'].append(player.get('goalsConceded', None))
+
+                
+
 
 
         for official in response.json().get('officials', None):
@@ -325,7 +391,9 @@ for id_s in tqdm(list(id_season['id'][:num_season])):
             officials['role'].append(role)
             officials['age'].append(age)
 
+
 player_team = pd.DataFrame(players)
+goalkippers = pd.DataFrame(goalkippers)
 officials_team = pd.DataFrame(officials)
 
 #save DataFrame csv
@@ -337,7 +405,9 @@ filepath = Path(dir + '/officials_team.csv')
 filepath.parent.mkdir(parents=True, exist_ok=True)  
 officials_team.to_csv(filepath, index=False)
 
-
+filepath = Path(dir + '/goalkippers.csv')
+filepath.parent.mkdir(parents=True, exist_ok=True)  
+goalkippers.to_csv(filepath, index=False)
 
 data = pars_dictline(result, col_main)
 df_main = pd.DataFrame(data, columns=col_main.values())
