@@ -4,7 +4,7 @@ import asyncio
 from aiogram.filters import Command
 from aiogram.methods import AnswerCallbackQuery
 from aiogram.methods import SendMessage
-from main import games_today, games_tomorrow, games_ten
+from main import games_today, games_tomorrow, games_ten, tomorrow_predict, ten_predict
 from pytest_mock import MockerFixture
 from aiogram_tests import MockedBot
 import api_client
@@ -12,7 +12,7 @@ from aiogram_tests.handler import CallbackQueryHandler
 from aiogram_tests.handler import MessageHandler
 from aiogram_tests.types.dataset import CALLBACK_QUERY
 from aiogram_tests.types.dataset import MESSAGE
-from aiogram_tests.bot import MockedBot  # Add this line
+
 
 @pytest.mark.asyncio
 async def test_games_today(mocker: MockerFixture):
@@ -25,7 +25,8 @@ async def test_games_today(mocker: MockerFixture):
 
     assert answer_message == expectedResult
 
-    mocker.patch('main.make_request', return_value=[{'Home': '1', 'Away': '2', 'Ground': '3'}])
+    val = [{'Home': '1', 'Away': '2', 'Ground': '3'}]
+    mocker.patch('main.make_request', return_value=val)
     requester = MockedBot(request_handler=MessageHandler(games_today, auto_mock_success=False))
     calls = await requester.query(MESSAGE.as_object(text="games_today"))
     answer_message = calls.send_message.fetchone().text
@@ -50,7 +51,8 @@ async def test_games_tomorrow(mocker: MockerFixture):
 
     assert answer_message == expectedResult
 
-    mocker.patch('main.make_request', return_value=[{'Home': '1', 'Away': '2', 'Ground': '3'}])
+    val = [{'Home': '1', 'Away': '2', 'Ground': '3'}]
+    mocker.patch('main.make_request', return_value=val)
     requester = MockedBot(request_handler=MessageHandler(games_tomorrow, auto_mock_success=False))
     calls = await requester.query(MESSAGE.as_object(text="games_tomorrow"))
     answer_message = calls.send_message.fetchone().text
@@ -71,7 +73,7 @@ async def test_games_ten(mocker: MockerFixture):
     calls = await requester.query(MESSAGE.as_object(text="games_ten"))
     answer_message = calls.send_message.fetchone().text
 
-    expectedResult = 'No games tomorrow'
+    expectedResult = 'No games'
 
     assert answer_message == expectedResult
 
@@ -85,5 +87,59 @@ async def test_games_ten(mocker: MockerFixture):
 +------+------+--------+
 | 1    | 2    |      3 |
 +------+------+--------+</pre>'''
+
+    assert answer_message == expectedResult
+
+
+@pytest.mark.asyncio
+async def test_tomorrow_predict(mocker: MockerFixture):
+    mocker.patch('main.make_request', return_value=[])
+    requester = MockedBot(request_handler=MessageHandler(tomorrow_predict, auto_mock_success=False))
+    calls = await requester.query(MESSAGE.as_object(text="tomorrow_predict"))
+    answer_message = calls.send_message.fetchone().text
+
+    expectedResult = 'No games tomorrow'
+
+    assert answer_message == expectedResult
+
+    val = [{'Home': '1', 'Away': '2', 'Predict': '3', 'Proba': 0.9999}]
+    mocker.patch('main.make_request', return_value=val)
+    requester = MockedBot(request_handler=MessageHandler(tomorrow_predict, auto_mock_success=False))
+    calls = await requester.query(MESSAGE.as_object(text="tomorrow_predict"))
+    answer_message = calls.send_message.fetchone().text
+
+    expectedResult = '''<pre>+------+------+---------+-------+
+| Home | Away | Predict | Proba |
++------+------+---------+-------+
+| 1    | 2    |    3    |  1.00 |
++------+------+---------+-------+</pre>'''
+
+    assert answer_message == expectedResult
+
+
+@pytest.mark.asyncio
+async def test_ten_predict(mocker: MockerFixture):
+    mocker.patch('main.make_request', return_value=[])
+    requester = MockedBot(request_handler=MessageHandler(ten_predict, auto_mock_success=False))
+    calls = await requester.query(MESSAGE.as_object(text="ten_predict"))
+    answer_message = calls.send_message.fetchone().text
+
+    expectedResult = 'No games'
+
+    assert answer_message == expectedResult
+
+    val = [{'Home': '1', 'Away': '2', 'Predict': '3', 'Proba': 0.9999}]
+    mocker.patch('main.make_request', return_value=val)
+    requester = MockedBot(request_handler=MessageHandler(ten_predict, auto_mock_success=False))
+    calls = await requester.query(MESSAGE.as_object(text="ten_predict"))
+    answer_message = calls.send_message.fetchone().text
+
+    print('>>>>>>>>>>>>', answer_message)
+
+    expectedResult = '''<pre>+------+------+---------+-------+
+| Home | Away | Predict | Proba |
++------+------+---------+-------+
+| 1    | 2    |    3    |  1.00 |
++------+------+---------+-------+</pre>'''
 
     assert answer_message == expectedResult

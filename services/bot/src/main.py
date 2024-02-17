@@ -86,13 +86,13 @@ async def today_predict(message: types.Message):
         await message.answer('No games today')
 
 @dp.message(F.text, Command('ten_predict'))
-async def today_predict(message: types.Message):
+async def ten_predict(message: types.Message):
     json = await make_request('/games-predict')
     if len(json):
         table = format_games_with_predict_table(json)
         await message.answer(f'<pre>{table}</pre>', parse_mode=ParseMode.HTML)
     else:
-        await message.answer('No games today')
+        await message.answer('No games')
 
 async def main():
     logging.basicConfig(level=logging.DEBUG)
