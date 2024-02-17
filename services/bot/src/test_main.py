@@ -5,6 +5,7 @@ from aiogram_tests import MockedBot
 from aiogram_tests.handler import MessageHandler
 from aiogram_tests.types.dataset import MESSAGE
 
+
 @pytest.mark.asyncio
 async def test_games_today(mocker: MockerFixture):
     mocker.patch('main.make_request', return_value=[])
@@ -135,6 +136,7 @@ async def test_ten_predict(mocker: MockerFixture):
 
     assert answer_message == expectedResult
 
+
 @pytest.mark.asyncio
 async def test_today_predict(mocker: MockerFixture):
     mocker.patch('main.make_request', return_value=[])
@@ -159,6 +161,7 @@ async def test_today_predict(mocker: MockerFixture):
 +------+------+---------+-------+</pre>'''
 
     assert answer_message == expectedResult
+
 
 @pytest.mark.asyncio
 async def test_stats(mocker: MockerFixture):
