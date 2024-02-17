@@ -1,18 +1,9 @@
 import pytest
-from pytest_mock import mocker
-import asyncio
-from aiogram.filters import Command
-from aiogram.methods import AnswerCallbackQuery
-from aiogram.methods import SendMessage
-from main import games_today, games_tomorrow, games_ten, tomorrow_predict, ten_predict
+from main import games_today, games_tomorrow, games_ten, tomorrow_predict, today_predict, ten_predict, stats
 from pytest_mock import MockerFixture
 from aiogram_tests import MockedBot
-import api_client
-from aiogram_tests.handler import CallbackQueryHandler
 from aiogram_tests.handler import MessageHandler
-from aiogram_tests.types.dataset import CALLBACK_QUERY
 from aiogram_tests.types.dataset import MESSAGE
-
 
 @pytest.mark.asyncio
 async def test_games_today(mocker: MockerFixture):
@@ -141,5 +132,57 @@ async def test_ten_predict(mocker: MockerFixture):
 +------+------+---------+-------+
 | 1    | 2    |    3    |  1.00 |
 +------+------+---------+-------+</pre>'''
+
+    assert answer_message == expectedResult
+
+@pytest.mark.asyncio
+async def test_today_predict(mocker: MockerFixture):
+    mocker.patch('main.make_request', return_value=[])
+    requester = MockedBot(request_handler=MessageHandler(today_predict, auto_mock_success=False))
+    calls = await requester.query(MESSAGE.as_object(text="today_predict"))
+    answer_message = calls.send_message.fetchone().text
+
+    expectedResult = 'No games today'
+
+    assert answer_message == expectedResult
+
+    val = [{'Home': '1', 'Away': '2', 'Predict': '3', 'Proba': 0.9999}]
+    mocker.patch('main.make_request', return_value=val)
+    requester = MockedBot(request_handler=MessageHandler(today_predict, auto_mock_success=False))
+    calls = await requester.query(MESSAGE.as_object(text="today_predict"))
+    answer_message = calls.send_message.fetchone().text
+
+    expectedResult = '''<pre>+------+------+---------+-------+
+| Home | Away | Predict | Proba |
++------+------+---------+-------+
+| 1    | 2    |    3    |  1.00 |
++------+------+---------+-------+</pre>'''
+
+    assert answer_message == expectedResult
+
+@pytest.mark.asyncio
+async def test_stats(mocker: MockerFixture):
+    mocker.patch('main.make_request', return_value=[])
+    requester = MockedBot(request_handler=MessageHandler(stats, auto_mock_success=False))
+    calls = await requester.query(MESSAGE.as_object(text="stats"))
+    answer_message = calls.send_message.fetchone().text
+
+    expectedResult = 'No stats'
+
+    assert answer_message == expectedResult
+
+    val = [{'team_name': '1', 'avg_score_home': 0.5, 'avg_score_away': 0.5}]
+    mocker.patch('main.make_request', return_value=val)
+    requester = MockedBot(request_handler=MessageHandler(stats, auto_mock_success=False))
+    calls = await requester.query(MESSAGE.as_object(text="stats"))
+    answer_message = calls.send_message.fetchone().text
+
+    print(answer_message)
+
+    expectedResult = '''<pre>+-----------+----------------+----------------+
+| team_name | avg_score_home | avg_score_away |
++-----------+----------------+----------------+
+|     1     |           0.50 |           0.50 |
++-----------+----------------+----------------+</pre>'''
 
     assert answer_message == expectedResult
