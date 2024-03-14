@@ -1,15 +1,12 @@
 # dags/pars.py
-from sqlalchemy import MetaData, Table, Column, String, Float, Date, DateTime, Integer, DateTime, UniqueConstraint, inspect
 import pendulum
 from airflow.decorators import dag, task
 import pandas as pd
 import numpy as np
 import pandas as pd
 import numpy as np
-from tqdm import tqdm
 import requests
-from bs4 import BeautifulSoup
-from time import sleep
+
 from pathlib import Path  
 
 from features import headers, col_start_player, col_start_club, col_id_season, col_club_stat, col_player_stat, col_games, team_id, col_main, id_stadium
