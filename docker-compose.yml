@@ -22,15 +22,15 @@ services:
     depends_on:
       - api
 
-#  streamlit:
-#    build: ./services/streamlit
-#    command: streamlit run streamlit_app.py --server.port 8501  --server.address=0.0.0.0
-#
-#    networks:
-#      - shared_network
-#
-#    depends_on:
-#      - api
+  streamlit:
+    build: ./services/streamlit
+    command: streamlit run streamlit_app.py --server.port 8501  --server.address=0.0.0.0
+
+    networks:
+      - shared_network
+
+    depends_on:
+      - api
 
   redis:
     image: redis:alpine
