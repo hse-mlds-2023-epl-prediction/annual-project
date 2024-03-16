@@ -1,4 +1,3 @@
-import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
@@ -28,3 +27,44 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
+uri = {
+    'streamlit': '5.104.75.226:8501',
+    'mlflow': '5.104.75.226:5000',
+    'minio': '5.104.75.226:9001/login',
+    'airflow': '176.109.107.7:8080'
+}
+
+teams = [('Arsenal', 'ARS', 1.0),
+    ('Aston Villa', 'AVL', 2.0),
+    ('Bournemouth', 'BOU', 127.0),
+    ('Brentford', 'BRE', 130.0),
+    ('Brighton & Hove Albion', 'BHA', 131.0),
+    ('Burnley', 'BUR', 43.0),
+    ('Cardiff City', 'CAR', 46.0),
+    ('Chelsea', 'CHE', 4.0),
+    ('Crystal Palace', 'CRY', 6.0),
+    ('Everton', 'EVE', 7.0),
+    ('Fulham', 'FUL', 34.0),
+    ('Huddersfield Town', 'HUD', 159.0),
+    ('Hull City', 'HUL', 41.0),
+    ('Leeds United', 'LEE', 9.0),
+    ('Leicester City', 'LEI', 26.0),
+    ('Liverpool', 'LIV', 10.0),
+    ('Luton Town', 'LUT', 163.0),
+    ('Manchester City', 'MCI', 11.0),
+    ('Manchester United', 'MUN', 12.0),
+    ('Middlesbrough', 'MID', 13.0),
+    ('Newcastle United', 'NEW', 23.0),
+    ('Norwich City', 'NOR', 14.0),
+    ('Nottingham Forest', 'NFO', 15.0),
+    ('Queens Park Rangers', 'QPR', 17.0),
+    ('Sheffield United', 'SHU', 18.0),
+    ('Southampton', 'SOU', 20.0),
+    ('Stoke City', 'STK', 42.0),
+    ('Sunderland', 'SUN', 29.0),
+    ('Swansea City', 'SWA', 45.0),
+    ('Tottenham Hotspur', 'TOT', 21.0),
+    ('Watford', 'WAT', 33.0),
+    ('West Bromwich Albion', 'WBA', 36.0),
+    ('West Ham United', 'WHU', 25.0),
+    ('Wolverhampton Wanderers', 'WOL', 38.0)]
