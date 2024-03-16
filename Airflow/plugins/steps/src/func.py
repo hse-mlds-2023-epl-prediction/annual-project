@@ -1,7 +1,7 @@
 import requests
 from time import sleep
 
-from features import headers
+from steps.src.features import headers
 
 def flatten_dict(dict_, parent_key='', separator='_'):
     """ flatten dict

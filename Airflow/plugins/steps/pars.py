@@ -7,11 +7,9 @@ import pandas as pd
 import numpy as np
 import requests
 
-from pathlib import Path  
+from steps.src.features import headers, col_start_player, col_start_club, col_id_season, col_club_stat, col_player_stat, col_games, team_id, col_main, id_stadium
 
-from features import headers, col_start_player, col_start_club, col_id_season, col_club_stat, col_player_stat, col_games, team_id, col_main, id_stadium
-
-from func import flatten_dict, pars_dictline, list_to_dict, pars_dictfeature
+from steps.src.func import flatten_dict, pars_dictline, list_to_dict, pars_dictfeature
 
 def pars(**kwargs):
     dir = 'data/'
@@ -55,8 +53,9 @@ def pars(**kwargs):
     df_start_player['id'] = df_start_player['id'].astype(int)
 
     #save DataFrame csv
-    filepath = Path(dir +'/df_start_player.csv')  
-    filepath.parent.mkdir(parents=True, exist_ok=True)  
-    df_start_player.to_csv(filepath, index=False)
+    #filepath = dir + 'df_start_player.csv'
+    #filepath.parent.mkdir(parents=True, exist_ok=True)  
+    #df_start_player.to_csv(filepath, index=False)
 
     print('Get base info about players')
+    print(df_start_player)

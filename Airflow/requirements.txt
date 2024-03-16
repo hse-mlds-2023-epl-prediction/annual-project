@@ -169,4 +169,3 @@ WTForms==3.0.1
 xattr==0.10.1
 yarl==1.9.3
 zipp==3.17.0
-pathlib
