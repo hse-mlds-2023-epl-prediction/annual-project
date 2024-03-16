@@ -155,12 +155,12 @@ def helthy_service(uri: str):
     try:
         r= requests.get(f'http://{uri}')
         if r.status_code == 200:
-            streamlit_status = 'healthy'
+            status = 'healthy'
         else:
-            streamlit_status = 'unhealthy'
+            status = 'unhealthy'
     except Exception as e:
-        streamlit_status = 'unhealthy'
-    return streamlit_status
+        status = 'unhealthy'
+    return status
 
 def helthy_services(services: dict = uri):
     result = {}

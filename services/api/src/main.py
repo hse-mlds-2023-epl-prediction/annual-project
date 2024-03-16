@@ -64,5 +64,5 @@ async def get_favorite_comand(user: int):
 @app.get('/health')
 #Проверка сервисов
 async def health() -> dict:
-    result = await helthy_services()
+    result = helthy_services()
     return result
