@@ -20,7 +20,10 @@ class Settings(BaseSettings):
         'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.5845.962 YaBrowser/23.9.1.962 Yowser/2.5 Safari/537.36',
     }
 
-    model_config = SettingsConfigDict(env_file=".env")
+    redis_host: str
+    redis_port: int
+
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding='utf-8')
 
 settings = Settings()
 
