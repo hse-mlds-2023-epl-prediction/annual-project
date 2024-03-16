@@ -6,20 +6,49 @@ services:
     command: uvicorn src.main:app --reload --port 80 --host "0.0.0.0"
     ports:
       - 80:80
+    depends_on:
+      - redis
+
+    networks:
+      - shared_network
+
   bot:
     build: ./services/bot
     command: python ./src/main.py
 
-    network_mode: host
+    networks:
+      - shared_network
 
     depends_on:
       - api
 
-  streamlit:
-    build: ./services/streamlit
-    command: streamlit run streamlit_app.py --server.port 8501  --server.address=0.0.0.0
+#  streamlit:
+#    build: ./services/streamlit
+#    command: streamlit run streamlit_app.py --server.port 8501  --server.address=0.0.0.0
+#
+#    networks:
+#      - shared_network
+#
+#    depends_on:
+#      - api
 
-    network_mode: host
+  redis:
+    image: redis:alpine
+    hostname: redis
+    container_name: redis
+    restart: on-failure
+    ports:
+      - "6379:6379"
+    command: redis-server
+    volumes:
+      - cache:/data
+    networks:
+      - shared_network
 
-    depends_on:
-      - api
+volumes:
+  cache:
+    driver: local
+
+networks:
+  shared_network:
+    driver: bridge
