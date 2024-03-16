@@ -9,14 +9,17 @@ import numpy as np
 
 from src.config import settings
 
+
 class GameInfo(BaseModel):
     Home: str
     Away: str
     Ground: str
 
+
 class GameInfoWithPrediction(GameInfo):
     Predict: int
     Proba: float
+
 
 def make_request():
     s = requests.Session()
@@ -27,6 +30,7 @@ def make_request():
     data = response.json()['content']
 
     return data
+
 
 def get_dataframe():
     r = make_request()
@@ -46,11 +50,13 @@ def get_dataframe():
 
     return df
 
+
 def get_games():
     df = get_dataframe()
     df = df[['gameDate', 'teams_team_1_name', 'teams_team_2_name', 'ground_name']]
     df.columns = ['gameDate', 'Home', 'Away', 'Ground']
     return df
+
 
 def get_games_today():
     df = get_games()
@@ -59,6 +65,7 @@ def get_games_today():
 
     return df
 
+
 def get_games_tomorrow():
     df = get_games()
     tomorrow = datetime.now().date() + timedelta(days=1)
@@ -66,14 +73,28 @@ def get_games_tomorrow():
 
     return df
 
+
 def prepare(df):
     df_mean = pd.read_csv(os.path.join(os.path.dirname(__file__)) + '/model/df_mean.csv')
     df_lag = pd.read_csv(os.path.join(os.path.dirname(__file__)) + '/model/df_lag.csv')
     df = df.merge(df_mean, left_on='teams_team_1_name', right_on='club_name', how='left')
     df = df.merge(df_mean, left_on='teams_team_2_name', right_on='club_name', suffixes=('_team_1', '_team_2'), how='left')
     df['gameweek_compSeason_label'] = df['gameweek_compSeason_label'].astype('int')
-    df = pd.merge(df, df_lag, left_on=['teams_team_1_name', 'gameweek_compSeason_label'], right_on=['club_name', 'season'], how='left')
-    df = pd.merge(df, df_lag, left_on=['teams_team_2_name', 'gameweek_compSeason_label'], right_on=['club_name', 'season'], how='left', suffixes=('_lag_team1', '_lag_team2'))
+    df = pd.merge(
+        df,
+        df_lag,
+        left_on=['teams_team_1_name', 'gameweek_compSeason_label'],
+        right_on=['club_name', 'season'],
+        how='left'
+    )
+    df = pd.merge(
+        df,
+        df_lag,
+        left_on=['teams_team_2_name', 'gameweek_compSeason_label'],
+        right_on=['club_name', 'season'],
+        how='left',
+        suffixes=('_lag_team1', '_lag_team2')
+    )
 
     df.drop(['season_lag_team2', 'season_lag_team1', 'club_name_lag_team1', 'club_name_lag_team2', 'gameDate'], axis=1, inplace=True)
 
@@ -116,6 +137,7 @@ def get_games_today_predict():
 
     return df
 
+
 def get_games_predict():
     df = get_dataframe()
     df = df.iloc[:10, :]
@@ -126,6 +148,7 @@ def get_games_predict():
     df['Proba'] = np.max(proba, axis=1, keepdims=True)
 
     return df
+
 
 def get_game_by_limit(n: int):
     df = get_games()
