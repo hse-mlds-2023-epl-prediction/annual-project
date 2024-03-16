@@ -25,9 +25,9 @@ class Settings(BaseSettings):
 settings = Settings()
 
 uri = {
-    'streamlit': '127.0.0.1:8501',
-    'mlflow': '127.0.0.1:5000',
-    'minio': '127.0.0.1:9000',
+    'streamlit': '5.104.75.226:8501',
+    'mlflow': '5.104.75.226:5000',
+    'minio': '5.104.75.226:9001/login',
     'airflow': '176.109.107.7:8080'
 }
 
