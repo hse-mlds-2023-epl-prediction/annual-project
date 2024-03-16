@@ -304,7 +304,7 @@ with tab3:
         st.pyplot(fig)
 
     with tab4:
-        r = requests.get('http://localhost/games-predict').json()
+        r = requests.get('http://api/games-predict').json()
 
         st.subheader('Предсказание ближайщих 10 матчей')
 

@@ -3,7 +3,7 @@ from pydantic import SecretStr
 
 
 class Settings(BaseSettings):
-    api_base_url: str = 'http://localhost'
+    api_base_url: str = 'http://api'
 
     bot_token: SecretStr
 
