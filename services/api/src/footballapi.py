@@ -2,21 +2,12 @@ from datetime import datetime, timedelta
 import os
 import pickle
 import requests
-from pydantic import BaseModel
 from collections import defaultdict
 import pandas as pd
 import numpy as np
+from src.config import settings, teams, uri
 
-from src.config import settings
-
-class GameInfo(BaseModel):
-    Home: str
-    Away: str
-    Ground: str
-
-class GameInfoWithPrediction(GameInfo):
-    Predict: int
-    Proba: float
+db_favorite = defaultdict(list)
 
 def make_request():
     s = requests.Session()
@@ -133,3 +124,46 @@ def get_game_by_limit(n: int):
     df.reset_index(drop=True, inplace=True)
 
     return df
+
+def add_comand(name: str, user: int) -> str:
+    #Функция добавления команды в избранное
+    #name - название команды (сокращенное или полное)
+    #user - id пользователя
+    for team in teams:
+        if name in team:
+            name_full = team[0]
+            name_abb = team[1]
+            id_team = team[2]
+
+    if 'name_full' not in locals():
+        return f'Команда {name} не найдена'
+    
+    if name_full in db_favorite[user]:
+        return f'Команда {name} уже есть в избранном'
+    else:
+        db_favorite[user].append(name_full)
+        return f'Команда {name} добавлена в избранное'
+    
+def get_favorite(user: int) -> list:
+    result = db_favorite[user]
+    if len(result) == 0:
+        return 'В избранном команд нет'
+    else:    
+        return result
+    
+def helthy_service(uri: str):
+    try:
+        r= requests.get(f'http://{uri}')
+        if r.status_code == 200:
+            streamlit_status = 'healthy'
+        else:
+            streamlit_status = 'unhealthy'
+    except Exception as e:
+        streamlit_status = 'unhealthy'
+    return streamlit_status
+
+def helthy_services(services: dict = uri):
+    result = {}
+    for name, uri in services.items():
+        result[name] = helthy_service(uri)
+    return result
