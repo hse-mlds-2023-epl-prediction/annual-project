@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 from feat import feature_list
 import numpy as np
 import os
-from api_client import make_request
 import requests
 
 

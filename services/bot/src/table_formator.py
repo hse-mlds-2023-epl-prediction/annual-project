@@ -19,7 +19,13 @@ def format_games_with_predict_table(json):
     table.align['Away'] = 'l'
 
     for item in json:
-        table.add_row([item['Home'], item['Away'], item['Predict'], f'{item["Proba"]:.2f}'])
+        table.add_row(
+            [item['Home'],
+             item['Away'],
+             item['Predict'],
+             f'{item["Proba"]:.2f}'
+             ]
+            )
 
     return table
 
@@ -31,6 +37,10 @@ def format_stats_table(json):
     table.align['avg_score_away'] = 'r'
 
     for item in json:
-        table.add_row([item['team_name'], f'{item["avg_score_home"]:.2f}', f'{item["avg_score_away"]:.2f}'])
+        table.add_row(
+            [item['team_name'],
+             f'{item["avg_score_home"]:.2f}',
+             f'{item["avg_score_away"]:.2f}']
+            )
 
     return table
