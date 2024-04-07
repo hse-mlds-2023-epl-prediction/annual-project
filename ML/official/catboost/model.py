@@ -1,15 +1,6 @@
 import pandas as pd
-from catboost import CatBoostClassifier, Pool
-from sklearn.metrics import roc_auc_score as auc, accuracy_score
-from sklearn.model_selection import GridSearchCV
-import seaborn as sns
-import matplotlib.pyplot as plt
-from tqdm import tqdm
 import pickle
-
-import numpy as np
-
-from func import rm_high_corr_feat
+from catboost import CatBoostClassifier
 
 df = pd.read_csv('../prepare_data/data/df_temp_65.csv')
 
@@ -26,10 +17,20 @@ x_train = train.drop('team_1_hue', axis=1)
 y_val = val['team_1_hue']
 x_val = val.drop('team_1_hue', axis=1)
 
-cat = ['gameweek_gameweek',	'gameweek_compSeason_label', 'teams_team_1_name', 'teams_team_2_name', 'ground_name']
+cat = ['gameweek_gameweek',
+       'gameweek_compSeason_label',
+       'teams_team_1_name',
+       'teams_team_2_name',
+       'ground_name']
 
+model = CatBoostClassifier(
+    iterations=2000,
+    learning_rate=0.0005,
+    loss_function='MultiClass',
+    depth=4,
+    l2_leaf_reg=6
+    )
 
-model = CatBoostClassifier(iterations=2000, learning_rate=0.0005, loss_function='MultiClass', depth=4, l2_leaf_reg=6)
 model.fit(x_train, y_train, cat_features=cat, verbose=False)
 
 with open('pickle/catboost.pickle', 'wb') as file:

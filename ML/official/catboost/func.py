@@ -1,11 +1,3 @@
-import pandas as pd
-from catboost import CatBoostClassifier
-from sklearn.metrics import roc_auc_score as auc
-import numpy as np
-
-
-             
-
 def rm_high_corr_feat(df, thr, exc_col):
     features_to_remove = set()
 
@@ -20,7 +12,6 @@ def rm_high_corr_feat(df, thr, exc_col):
     # remove feature with corr > thr
     df = df.drop(columns=features_to_remove)
 
-    # 
     if len(features_to_remove) > 0:
         return rm_high_corr_feat(df, thr, exc_col)
     else:
