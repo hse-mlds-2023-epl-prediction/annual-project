@@ -8,30 +8,38 @@ import os
 import requests
 
 
-feature_dict = {i[0][7:]:i for i in feature_list}
+feature_dict = {i[0][7:]: i for i in feature_list}
 
 st.header("HSE EPL ML Project")
 
+
 def choose_season():
     appointment = st.slider(
-    "Выберите сезоны:",
-    min_value=2019,
-    max_value=2023,
-    value=(2021, 2023),
-    step=1)
+                "Выберите сезоны:",
+                min_value=2019,
+                max_value=2023,
+                value=(2021, 2023),
+                step=1)
 
     return appointment
 
-#Выбор сезонов
+
+# Выбор сезонов
 season_player = choose_season()
+tab1, tab2, tab3, tab4 = st.tabs(
+    ["Игроки", "Клубы", "Игры", "Предсказания результатов матчей"]
+    )
 
-
-tab1, tab2, tab3, tab4 = st.tabs(["Игроки", "Клубы", "Игры", "Предсказания результатов матчей"])
-
-df_pl = pd.read_csv(os.path.join(os.path.dirname(__file__)) + '/data/players_stat.csv')
-df_cl = pd.read_csv(os.path.join(os.path.dirname(__file__)) + '/data/clubs_stat.csv')
-df_gm = pd.read_csv(os.path.join(os.path.dirname(__file__)) + '/data/games.csv', low_memory=False)
-
+df_pl = pd.read_csv(
+    os.path.join(os.path.dirname(__file__)) + '/data/players_stat.csv'
+    )
+df_cl = pd.read_csv(
+    os.path.join(os.path.dirname(__file__)) + '/data/clubs_stat.csv'
+    )
+df_gm = pd.read_csv(
+    os.path.join(
+        os.path.dirname(__file__)) + '/data/games.csv', low_memory=False
+        )
 
 
 with tab1:
@@ -39,22 +47,31 @@ with tab1:
 
     st.subheader('Топ 10 игроков')
 
-    #Выбор признака по которму сортировать игроков
+    # Выбор признака по которму сортировать игроков
     feat_player_agg = st.radio(
-    "Выберите признак, по которому подбирать топ",
-    key="visibility",
-    options=["количество побед", "процент побед", "победные голы"])
+        "Выберите признак, по которому подбирать топ",
+        key="visibility",
+        options=["количество побед", "процент побед", "победные голы"])
 
+    st.write(
+        f'''Топ 10 игроков за сезоны {season_player}
+          по  признаку: {feat_player_agg}'''
+        )
+    dict_feat_agg_play = {
+        'количество побед': '_wins',
+        "процент побед": 'per_wins',
+        'победные голы': '_winning_goal'}
 
-    st.write(f'Топ 10 игроков за сезоны {season_player} по  признаку: {feat_player_agg}')
-    dict_feat_agg_play = {'количество побед': '_wins', "процент побед": 'per_wins', 'победные голы': '_winning_goal'}
+    df_player = df_pl[(df_pl['season'] >= season_player[0]) & (
+        df_pl['season'] <= season_player[1])]
 
+    df_player_gr = df_player.groupby(by='name_display', as_index=False).sum()
 
-    df_player = df_pl[(df_pl['season']>=season_player[0]) & (df_pl['season']<=season_player[1])] #Датасет по нужным сезонам
-    df_player_gr = df_player.groupby(by='name_display', as_index=False).sum().sort_values(by=dict_feat_agg_play[feat_player_agg], ascending=False)
+    df_player_gr = df_player_gr.sort_values(
+        by=dict_feat_agg_play[feat_player_agg], ascending=False
+        )
+    # Выбор нужных признаков
 
-    #Выбор нужных признаков
-    
     map_feat_players = {
         'name_display': 'Имя игрока',
         '_wins': 'Побед',
@@ -74,22 +91,40 @@ with tab1:
     df_player_gr.rename(columns=map_feat_players, inplace=True)
 
     list_feat_agg = st.multiselect(
-    'Выберите интересующие вас признаки',
-    map_feat_players.values(),
-    ['Имя игрока', 'Побед', 'Поражений', 'Ничьих', 'Игр', 'Процент побед'])
+        'Выберите интересующие вас признаки',
+        map_feat_players.values(),
+        ['Имя игрока', 'Побед', 'Поражений', 'Ничьих', 'Игр', 'Процент побед'])
 
-    #Вывод таблицы
+    # Вывод таблицы
     st.write(df_player_gr[list_feat_agg].head(10))
 
     st.subheader('Построение графика зависимости')
 
-    #Признаки для построения графика зависимости
-    col_player_distr = ['age', '_accurate_cross', '_accurate_pass', '_aerial_lost', '_aerial_won',
-                 '_appearances', '_backward_pass', '_blocked_pass', '_dispossessed', '_draws',
-                 '_duel_lost', '_duel_won', '_effective_head_clearance', '_fouls', '_fwd_pass',
-                 '_head_pass', '_head_pass', '_interception', '_losses', '_mins_played', '_wins',
-                 '_yellow_card', '_touches']
-    
+    # Признаки для построения графика зависимости
+    col_player_distr = ['age',
+                        '_accurate_cross',
+                        '_accurate_pass',
+                        '_aerial_lost',
+                        '_aerial_won',
+                        '_appearances',
+                        '_backward_pass',
+                        '_blocked_pass',
+                        '_dispossessed',
+                        '_draws',
+                        '_duel_lost',
+                        '_duel_won',
+                        '_effective_head_clearance',
+                        '_fouls',
+                        '_fwd_pass',
+                        '_head_pass',
+                        '_head_pass',
+                        '_interception',
+                        '_losses',
+                        '_mins_played',
+                        '_wins',
+                        '_yellow_card',
+                        '_touches']
+
     map_dict_player_distr = {
         'age': 'Возраст',
         '_wins': 'Побед',
@@ -105,21 +140,21 @@ with tab1:
         '_dispossessed': 'Потерь',
         '_fouls': 'Фолов',
             }
-    
+
     df_player.rename(columns=map_dict_player_distr, inplace=True)
 
-    #Мультиселект для графика
+    # Мультиселект для графика
     list_player_distr = st.multiselect(
-    'Выберите два признака для построения графика зависимости',
-    map_dict_player_distr.values(),
-    ['Побед', 'Передач'])
+        'Выберите два признака для построения графика зависимости',
+        map_dict_player_distr.values(),
+        ['Побед', 'Передач'])
 
-    
-
-    #Построение графика
+    # Построение графика
     if len(list_player_distr) >= 2:
         fig = plt.figure()
-        ax = sns.lineplot(data=df_player, x=list_player_distr[0], y=list_player_distr[1])
+        ax = sns.lineplot(
+            data=df_player, x=list_player_distr[0], y=list_player_distr[1]
+            )
         st.pyplot(fig)
 
 with tab2:
@@ -127,22 +162,28 @@ with tab2:
 
     st.subheader('Топ 3 клуба')
 
-    #Выбор признака по которму сортировать игроков
+    # Выбор признака по которму сортировать игроков
     feat_club_agg = st.radio(
-    "Выберите признак, по которому подбирать топ клубы",
-    key="club",
-    options=["количество побед", "количество голов"])
+        "Выберите признак, по которому подбирать топ клубы",
+        key="club",
+        options=["количество побед", "количество голов"]
+        )
 
-    st.write(f'Топ 3 клуба за сезоны {season_player} по  признаку: {feat_club_agg}')
-    dict_feat_agg_club = {'количество побед': '_wins', 'количество голов': '_goals'}
+    st.write(
+        f'Топ 3 клуба за сезоны {season_player} по  признаку: {feat_club_agg}'
+        )
+    dict_feat_agg_club = {
+        'количество побед': '_wins', 'количество голов': '_goals'
+        }
 
+    df_club = df_cl[(
+        df_cl['season'] >= season_player[0]
+        ) & (df_cl['season'] <= season_player[1])]
+    df_club_gr = df_club.groupby(
+        by='club_name', as_index=False).sum().sort_values(
+            by=dict_feat_agg_club[feat_club_agg], ascending=False)
 
-    df_club = df_cl[(df_cl['season']>=season_player[0]) & (df_cl['season']<=season_player[1])] #Датасет по нужным сезонам
-    df_club_gr = df_club.groupby(by='club_name', as_index=False).sum().sort_values(by=dict_feat_agg_club[feat_club_agg], ascending=False)
-
-
-
-    #Выбор нужных признаков
+    # Выбор нужных признаков
     map_feat_club = {
         'club_name': 'Клуб',
         '_wins': 'Побед',
@@ -157,16 +198,21 @@ with tab2:
             }
 
     list_club_agg = st.multiselect(
-    'Выберите интересующие вас признаки',
-    map_feat_club.values(),
-    ['Клуб', 'Побед', 'Голов' ,'Ничьих', 'Сэйвов', 'Передач', 'Владение мячом'])
+        'Выберите интересующие вас признаки',
+        map_feat_club.values(),
+        ['Клуб',
+         'Побед',
+         'Голов',
+         'Ничьих',
+         'Сэйвов',
+         'Передач',
+         'Владение мячом'])
 
-    #Вывод таблицы
+    # Вывод таблицы
     df_club_gr.rename(columns=map_feat_club, inplace=True)
     st.write(df_club_gr[list_club_agg].head(3))
 
-
-    #Признаки для построения графика зависимости
+    # Признаки для построения графика зависимости
     map_dict_club_distr = {
         '_wins': 'Побед',
         '_draws': 'Ничьих',
@@ -185,20 +231,22 @@ with tab2:
         '_total_offside': 'Офсайдов',
         '_total_tackle': 'Отборов',
             }
-    
+
     col_club_distr = map_dict_club_distr.values()
     df_club.rename(columns=map_dict_club_distr, inplace=True)
 
-    #Мультиселект для графика
+    # Мультиселект для графика
     list_club_distr = st.multiselect(
-    'Выберите два признака для построения графика зависимости',
-    col_club_distr,
-    ['Побед', 'Отборов'])
+        'Выберите два признака для построения графика зависимости',
+        col_club_distr,
+        ['Побед', 'Отборов'])
 
-    #Построение графика
+    # Построение графика
     if len(list_club_distr) >= 2:
         fig = plt.figure()
-        ax = sns.lineplot(data=df_club, x=list_club_distr[0], y=list_club_distr[1])
+        ax = sns.lineplot(
+            data=df_club, x=list_club_distr[0], y=list_club_distr[1]
+            )
         st.pyplot(fig)
 
 with tab3:
@@ -206,33 +254,50 @@ with tab3:
 
     st.subheader('Сравнительная статистика команд')
 
-    #Выбор команд
+    # Выбор команд
     list_club_game = st.multiselect(
-    'Выберите две команды',
-    ['Arsenal', 'Aston Villa', 'Bournemouth', 'Brentford',
-       'Brighton and Hove Albion', 'Burnley', 'Cardiff City', 'Chelsea',
-       'Crystal Palace', 'Everton', 'Fulham', 'Huddersfield Town',
-       'Hull City', 'Leeds United', 'Leicester City', 'Liverpool',
-       'Luton Town', 'Manchester City', 'Manchester United',
-       'Middlesbrough', 'Newcastle United', 'Norwich City',
-       'Nottingham Forest', 'Queens Park Rangers', 'Sheffield United',
-       'Southampton', 'Stoke City', 'Sunderland', 'Swansea City',
-       'Tottenham Hotspur', 'Watford', 'West Bromwich Albion',
-       'West Ham United', 'Wolverhampton Wanderers'],
-    ['Arsenal', 'Manchester United'])
+        'Выберите две команды',
+        ['Arsenal', 'Aston Villa', 'Bournemouth', 'Brentford',
+            'Brighton and Hove Albion', 'Burnley', 'Cardiff City', 'Chelsea',
+            'Crystal Palace', 'Everton', 'Fulham', 'Huddersfield Town',
+            'Hull City', 'Leeds United', 'Leicester City', 'Liverpool',
+            'Luton Town', 'Manchester City', 'Manchester United',
+            'Middlesbrough', 'Newcastle United', 'Norwich City',
+            'Nottingham Forest', 'Queens Park Rangers', 'Sheffield United',
+            'Southampton', 'Stoke City', 'Sunderland', 'Swansea City',
+            'Tottenham Hotspur', 'Watford', 'West Bromwich Albion',
+            'West Ham United', 'Wolverhampton Wanderers'],
+        ['Arsenal', 'Manchester United'])
 
+    df_games = df_gm[
+            (df_gm['gameweek_compSeason_label'] >= season_player[0]) &
+            (df_gm['gameweek_compSeason_label'] <= season_player[1])
+        ]
 
-    df_games = df_gm[(df_gm['gameweek_compSeason_label']>=season_player[0]) & (df_gm['gameweek_compSeason_label']<=season_player[1])] #Датасет по нужным сезонам
-    df_games_temp = df_games[((df_games['teams_team_1_name']==list_club_game[0]) & (df_games['teams_team_2_name']==list_club_game[1]))|\
-                             ((df_games['teams_team_1_name']==list_club_game[1]) & (df_games['teams_team_2_name']==list_club_game[0]))]\
-                             .groupby(by=['teams_team_1_name', 'teams_team_2_name', ], as_index=False).sum()\
-                             [['teams_team_1_name', 'teams_team_2_name', 'team_1_wins', 'team_2_wins', 'draw']]
-    
-    df_games_temp.rename(columns={'teams_team_1_name': 'Команда (h)', 'teams_team_2_name': 'Команда (g)',
-                                   'team_1_wins': 'Победы команды (h)', 'team_2_wins': 'Победы команды (g)', 'draw': 'Ничьи'}, inplace=True)
+    df_games_temp = df_games[
+        ((df_games['teams_team_1_name'] == list_club_game[0]) &
+         (df_games['teams_team_2_name'] == list_club_game[1])) |
+        ((df_games['teams_team_1_name'] == list_club_game[1]) &
+         (df_games['teams_team_2_name'] == list_club_game[0]))
+    ].groupby(
+        by=['teams_team_1_name', 'teams_team_2_name'],
+        as_index=False
+    ).sum()[[
+        'teams_team_1_name',
+        'teams_team_2_name',
+        'team_1_wins',
+        'team_2_wins',
+        'draw'
+    ]]
+
+    df_games_temp.rename(
+        columns={'teams_team_1_name': 'Команда (h)',
+                 'teams_team_2_name': 'Команда (g)',
+                 'team_1_wins': 'Победы команды (h)',
+                 'team_2_wins': 'Победы команды (g)',
+                 'draw': 'Ничьи'}, inplace=True)
 
     st.write(df_games_temp)
-
 
     st.subheader('Диаграмма рассеяния')
 
@@ -249,7 +314,7 @@ with tab3:
         'Кроссов': 'total_cross',
         'Передач в финальной трети': 'total_final_third_passes',
         'Успешных длинных передач': 'long_pass_own_to_opp_success',
-        'Потерь мяча': 'poss_lost_all',        
+        'Потерь мяча': 'poss_lost_all',
         'Входов в штрафную': 'pen_area_entries',
         'Передач влево': 'passes_left',
         'Точных длинных передач': 'accurate_long_balls',
@@ -285,28 +350,31 @@ with tab3:
             }
 
     select_box = st.selectbox(
-    "Выберите признак для построения диаграммы",
-    map_feature_dict.keys(),
-    index=None,
-    placeholder="Выберите признак",
-    )
+        "Выберите признак для построения диаграммы",
+        map_feature_dict.keys(),
+        index=None,
+        placeholder="Выберите признак",
+        )
 
-    df_games['team_1_hue'] = np.where(df_games['team_1_hue'] == 1, 'Победа', np.where(df_games['team_1_hue'] == 2, 'Поражение', 'Ничья'))
+    df_games['team_1_hue'] = np.where(
+        df_games['team_1_hue'] == 1, 'Победа',
+        np.where(df_games['team_1_hue'] == 2, 'Поражение', 'Ничья'))
+
     df_games.rename(columns={'team_1_hue': 'Результат матча'}, inplace=True)
-    
 
-    if select_box != None:
+    if select_box is not None:
         fig = plt.figure()
-        ax = sns.scatterplot(data=df_games, x=feature_dict[map_feature_dict[select_box]][0], y=feature_dict[map_feature_dict[select_box]][1], hue='Результат матча')
+        ax = sns.scatterplot(
+            data=df_games, x=feature_dict[map_feature_dict[select_box]][0],
+            y=feature_dict[map_feature_dict[select_box]][1],
+            hue='Результат матча')
         ax.set_xlabel('Домашняя команда')
         ax.set_ylabel('Гостевая команда')
         st.pyplot(fig)
 
     with tab4:
-        r = requests.get('http://api/games-predict').json()
-
+        req = requests.get('http://api/games-predict').json()
         st.subheader('Предсказание ближайщих 10 матчей')
-
-        df_req = pd.DataFrame(r)
+        df_req = pd.DataFrame(req)
 
         st.write(df_req)
