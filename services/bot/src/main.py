@@ -5,7 +5,8 @@ from aiogram.filters import Command
 from aiogram.enums.parse_mode import ParseMode
 from config_reader import config
 from api_client import make_request
-from table_formator import format_games_table, format_stats_table, format_games_with_predict_table
+from table_formator import format_games_table, format_stats_table, \
+      format_games_with_predict_table
 
 bot = Bot(token=config.bot_token.get_secret_value())
 dp = Dispatcher()
@@ -58,7 +59,8 @@ async def stats(message: types.Message):
 async def start(message: types.Message):
     await message.answer(
         "<b>Привет!</b>\n\n"
-        "Это tg bot команды проекта «Предсказательные модели для игроков и команд EPL»\n\n"
+        """Это tg bot команды проекта
+          «Предсказательные модели для игроков и команд EPL»\n\n"""
         "Список доступных команд:\n"
         "/stats - Статистика команд\n"
         "/games_ten - Посмотреть 10 следующих матчей\n"

@@ -1,8 +1,10 @@
 from typing import List
 from fastapi import FastAPI
 
-from src.footballapi import get_game_by_limit, get_games_tomorrow, get_games_today, get_games_today_predict, get_games_tomorrow_predict
-from src.footballapi import add_comand, get_games_predict, get_favorite, helthy_services
+from src.footballapi import get_game_by_limit, get_games_tomorrow
+from src.footballapi import get_games_today, get_games_today_predict
+from src.footballapi import get_games_tomorrow_predict, get_games_predict
+from src.footballapi import get_favorite, helthy_services, add_comand
 from src.models import GameInfo, GameInfoWithPrediction, Favorite
 from src.stats import stats, StatInfo
 from src.config import settings
@@ -15,6 +17,7 @@ app = FastAPI()
 
 DEFAULT_CACHE_TTL = 3600
 
+
 @app.get('/games')
 @cache(expire=DEFAULT_CACHE_TTL)
 async def games(limit: int = 10) -> List[GameInfo]:
@@ -22,6 +25,7 @@ async def games(limit: int = 10) -> List[GameInfo]:
     Десят ближайших игр
     """
     return get_game_by_limit(limit).to_dict('records')
+
 
 @app.get('/games-today')
 @cache(expire=DEFAULT_CACHE_TTL)
@@ -106,5 +110,7 @@ async def health() -> dict:
 
 @app.on_event("startup")
 async def startup():
-    redis = aioredis.from_url(f"redis://{settings.redis_host}:{settings.redis_port}")
+    redis = aioredis.from_url(
+        f"redis://{settings.redis_host}:{settings.redis_port}"
+        )
     FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")

@@ -1,14 +1,11 @@
 import pandas as pd
-from catboost import CatBoostClassifier
-from sklearn.metrics import roc_auc_score as auc
-import numpy as np
 from category_encoders import TargetEncoder
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
 
-             
+
 def cat_features(df: pd.DataFrame) -> list:
     """
     Функция для определения категориальных признаков
@@ -40,7 +37,12 @@ def cat_features(df: pd.DataFrame) -> list:
     return cat_cols
 
 
-def pca_pipeline(df: pd.DataFrame, y: pd.Series, cat_cols: list, num_cols: list, n_components: int=50, pca: bool=True):
+def pca_pipeline(df: pd.DataFrame,
+                 y: pd.Series,
+                 cat_cols: list,
+                 num_cols: list,
+                 n_components: int = 50,
+                 pca: bool = True):
     """
     Функция для преобразования датасета с использованием PCA
     """
@@ -59,7 +61,9 @@ def pca_pipeline(df: pd.DataFrame, y: pd.Series, cat_cols: list, num_cols: list,
 
     if pca:
         pca = PCA(n_components=n_components, random_state=42)
-        pipeline = Pipeline(steps=[('preprocessor', preprocessor), ('pca', pca)])
+        pipeline = Pipeline(steps=[
+            ('preprocessor', preprocessor),
+            ('pca', pca)])
 
     else:
         pipeline = Pipeline(steps=[('preprocessor', preprocessor)])
