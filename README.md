@@ -29,3 +29,25 @@
 ### DL-задачи
 1. Использование нейронных сетей для решения задач из блока ML
 2. Для анализа временных рядов использование рекуррентных сетей, сравнение их результатов с ML-подходом
+
+## Информация по структуре проекта
+Проект состоит из ряда директорий:
+- EDA - jupyter ноутбуки с EDA
+- ML - jupyter ноутбуки с экспериментами по ML, а так же файлы для работы с лучшей моделью
+- parsers - парсеры данных из разных источников(fbref, официальный сайт EPL, odds_portal)
+- services - директория с веб сервисами для доступа к ML моделям
+- services/api - fastapi сервер. [Подробнее](./services/api/README.md)
+- services/bot - telegram bot. [Подробнее](./services/bot/README.md)
+- services/streamlit - streamlit приложение 
+
+## Запуск
+
+### Команда для запуска сервисов для локальной разработки 
+```
+docker-compose -f docker-compose.yml -f docker-compose.development.yml up
+```
+
+### Команда для запуска сервисов в production окружении
+```
+docker-compose -f docker-compose.yml up
+```
