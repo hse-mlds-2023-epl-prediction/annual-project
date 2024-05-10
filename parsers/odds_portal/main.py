@@ -63,7 +63,8 @@ def convert_data(rows, season):
             'home_avg_odds': row['odds'][0]['avgOdds'] if has_ods else 1,
             'draw_avg_odds': row['odds'][1]['avgOdds'] if has_ods else 1,
             'away_avg_odds': row['odds'][2]['avgOdds'] if has_ods else 1,
-            'season': season
+            'season': season,
+            'date_start_timestamp': row['date-start-timestamp']
         })
     return data
 

@@ -17,5 +17,6 @@
 | draw_avg_odds	    | коэффициент на ничью                                       |
 | away_avg_odds	    | коэффициент на победу команды играющий на выезде           |
 | season	           | сезон в формате, start_year-end_year, например - 2014-2015 |
+| date_start_timestamp	           | timestamp даты матча                                       |
 
 Если данных для матча нет, то в колонках `home_avg_odds`, `draw_avg_odds`, `away_avg_odds` будет стоять значение = 1
