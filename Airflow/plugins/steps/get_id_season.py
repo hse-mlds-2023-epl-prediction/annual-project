@@ -3,11 +3,7 @@ from airflow.decorators import dag, task
 import pandas as pd
 import numpy as np
 import requests
-
-from steps.src.features import col_start_player, col_start_club, col_id_season, col_club_stat, col_player_stat, col_games, team_id, col_main, id_stadium
-from steps.src.model_table import metadata, table_season
-from steps.src.app import create_table
-from steps.src.config import uri_get_season, headers, conn_id
+from steps.src.config import uri, headers, conn_id
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from sqlalchemy import MetaData, Table, Column, String, Integer, inspect
 
@@ -21,7 +17,7 @@ def parser(**kwargs):
         'detail': '2',
         }
     session = requests.Session()
-    content = session.get(uri_get_season['get_season'], params=params, headers=headers).json()['content']
+    content = session.get(uri['get_season'], params=params, headers=headers).json()['content']
 
     for league in content:
         if league['abbreviation'] == 'EN_PR':
@@ -33,6 +29,12 @@ def parser(**kwargs):
 
 def create_db():
     
+    metadata = MetaData()
+    table_season = Table(
+        'seasons', metadata,
+        Column('id', Integer, primary_key=True),
+        Column('label', String),
+        )
     hook = PostgresHook(conn_id) 
     engine = hook.get_sqlalchemy_engine()
 

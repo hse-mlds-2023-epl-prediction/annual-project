@@ -17,6 +17,7 @@ headers = {
 
 conn_id = 'airflow'
 
-uri_get_season = {
+uri = {
     'get_season': 'https://footballapi.pulselive.com/football/competitions',
+    'get_stadium': 'https://footballapi.pulselive.com/football/teams'
 }

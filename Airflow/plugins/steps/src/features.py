@@ -1,3 +1,27 @@
+stadium_col = [
+    'club',
+    'club_id',
+    'stadium',
+    'stadium_id',
+    'city',
+    'capacity',
+    'latitude',
+    'longitude'
+]
+
+seasons_odds = [
+    {'id': 'jDTEm9zs', 'name': '2023-2024'},
+    {'id': 'nmP0jyrt', 'name': '2022-2023'},
+    {'id': 'tdkpynmB', 'name': '2021-2022'},
+    {'id': 'AJuiuwWt', 'name': '2020-2021'},
+    {'id': 'h2NtrDMq', 'name': '2019-2020'},
+    {'id': 'zoZ4r7jR', 'name': '2018-2019'},
+    {'id': 'UqQ8LECO', 'name': '2017-2018'},
+    {'id': '8Ai8InSt', 'name': '2016-2017'},
+    {'id': 'OhnzLqf7', 'name': '2015-2016'},
+    {'id': 'hK4hu76a', 'name': '2014-2015'},
+    {'id': 'OtIGJDpL', 'name': '2013-2014'}
+]
 team_id = [
         1,
         2,
