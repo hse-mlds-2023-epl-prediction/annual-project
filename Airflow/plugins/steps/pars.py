@@ -7,8 +7,8 @@ import pandas as pd
 import numpy as np
 import requests
 
-from steps.src.features import headers, col_start_player, col_start_club, col_id_season, col_club_stat, col_player_stat, col_games, team_id, col_main, id_stadium
-
+from steps.src.features import  col_start_player, col_start_club, col_id_season, col_club_stat, col_player_stat, col_games, team_id, col_main, id_stadium
+from steps.src.config import headers
 from steps.src.func import flatten_dict, pars_dictline, list_to_dict, pars_dictfeature
 
 def pars(**kwargs):

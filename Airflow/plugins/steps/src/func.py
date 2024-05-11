@@ -1,7 +1,8 @@
 import requests
 from time import sleep
 
-from steps.src.features import headers
+from steps.src.config import headers
+
 
 def flatten_dict(dict_, parent_key='', separator='_'):
     """ flatten dict
@@ -26,6 +27,7 @@ def flatten_dict(dict_, parent_key='', separator='_'):
             output_dict[new_key] = value
 
     return output_dict
+
 
 def get_col_dict(list_dict):
     """ 
