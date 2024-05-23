@@ -1,0 +1,20 @@
+[2024-05-11T16:04:43.104+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2024-05-11T16:04:43.116+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: get_seasons.parser___ manual__2024-05-11T16:04:41.077102+00:00 [queued]>
+[2024-05-11T16:04:43.120+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: get_seasons.parser___ manual__2024-05-11T16:04:41.077102+00:00 [queued]>
+[2024-05-11T16:04:43.120+0000] {taskinstance.py:2303} INFO - Starting attempt 1 of 1
+[2024-05-11T16:04:43.126+0000] {taskinstance.py:2327} INFO - Executing <Task(PythonOperator): parser___> on 2024-05-11 16:04:41.077102+00:00
+[2024-05-11T16:04:43.133+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61: DeprecationWarning: This process (pid=78) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2024-05-11T16:04:43.134+0000] {standard_task_runner.py:63} INFO - Started process 80 to run task
+[2024-05-11T16:04:43.134+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'get_seasons', 'parser___', 'manual__2024-05-11T16:04:41.077102+00:00', '--job-id', '431', '--raw', '--subdir', 'DAGS_FOLDER/get_seasons.py', '--cfg-path', '/tmp/tmpbh86umow']
+[2024-05-11T16:04:43.135+0000] {standard_task_runner.py:91} INFO - Job 431: Subtask parser___
+[2024-05-11T16:04:43.158+0000] {task_command.py:426} INFO - Running <TaskInstance: get_seasons.parser___ manual__2024-05-11T16:04:41.077102+00:00 [running]> on host 9662500d66f5
+[2024-05-11T16:04:43.211+0000] {taskinstance.py:2644} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='get_seasons' AIRFLOW_CTX_TASK_ID='parser___' AIRFLOW_CTX_EXECUTION_DATE='2024-05-11T16:04:41.077102+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2024-05-11T16:04:41.077102+00:00'
+[2024-05-11T16:04:43.212+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2024-05-11T16:04:43.642+0000] {python.py:237} INFO - Done. Returned value was: [{'label': '2023/24', 'id': 578.0}, {'label': '2022/23', 'id': 489.0}, {'label': '2021/22', 'id': 418.0}, {'label': '2020/21', 'id': 363.0}, {'label': '2019/20', 'id': 274.0}, {'label': '2018/19', 'id': 210.0}, {'label': '2017/18', 'id': 79.0}, {'label': '2016/17', 'id': 54.0}, {'label': '2015/16', 'id': 42.0}, {'label': '2014/15', 'id': 27.0}, {'label': '2013/14', 'id': 22.0}, {'label': '2012/13', 'id': 21.0}, {'label': '2011/12', 'id': 20.0}, {'label': '2010/11', 'id': 19.0}, {'label': '2009/10', 'id': 18.0}, {'label': '2008/09', 'id': 17.0}, {'label': '2007/08', 'id': 16.0}, {'label': '2006/07', 'id': 15.0}, {'label': '2005/06', 'id': 14.0}, {'label': '2004/05', 'id': 13.0}, {'label': '2003/04', 'id': 12.0}, {'label': '2002/03', 'id': 11.0}, {'label': '2001/02', 'id': 10.0}, {'label': '2000/01', 'id': 9.0}, {'label': '1999/00', 'id': 8.0}, {'label': '1998/99', 'id': 7.0}, {'label': '1997/98', 'id': 6.0}, {'label': '1996/97', 'id': 5.0}, {'label': '1995/96', 'id': 4.0}, {'label': '1994/95', 'id': 3.0}, {'label': '1993/94', 'id': 2.0}, {'label': '1992/93', 'id': 1.0}]
+[2024-05-11T16:04:43.642+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2024-05-11T16:04:43.662+0000] {taskinstance.py:1205} INFO - Marking task as SUCCESS. dag_id=get_seasons, task_id=parser___, execution_date=20240511T160441, start_date=20240511T160443, end_date=20240511T160443
+[2024-05-11T16:04:43.707+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 0
+[2024-05-11T16:04:43.724+0000] {taskinstance.py:3482} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2024-05-11T16:04:43.725+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
