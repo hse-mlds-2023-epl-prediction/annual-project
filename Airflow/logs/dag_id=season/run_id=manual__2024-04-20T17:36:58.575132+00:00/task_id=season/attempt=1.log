@@ -1,0 +1,14 @@
+[2024-04-20T17:36:59.687+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: season.season manual__2024-04-20T17:36:58.575132+00:00 [queued]>
+[2024-04-20T17:36:59.691+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: season.season manual__2024-04-20T17:36:58.575132+00:00 [queued]>
+[2024-04-20T17:36:59.692+0000] {taskinstance.py:1361} INFO - Starting attempt 1 of 1
+[2024-04-20T17:36:59.698+0000] {taskinstance.py:1382} INFO - Executing <Task(PythonOperator): season> on 2024-04-20 17:36:58.575132+00:00
+[2024-04-20T17:36:59.704+0000] {standard_task_runner.py:57} INFO - Started process 109 to run task
+[2024-04-20T17:36:59.706+0000] {standard_task_runner.py:84} INFO - Running: ['***', 'tasks', 'run', 'season', 'season', 'manual__2024-04-20T17:36:58.575132+00:00', '--job-id', '186', '--raw', '--subdir', 'DAGS_FOLDER/get_seasons.py', '--cfg-path', '/tmp/tmp4pe3a4j9']
+[2024-04-20T17:36:59.707+0000] {standard_task_runner.py:85} INFO - Job 186: Subtask season
+[2024-04-20T17:36:59.733+0000] {task_command.py:416} INFO - Running <TaskInstance: season.season manual__2024-04-20T17:36:58.575132+00:00 [running]> on host b5d741582e72
+[2024-04-20T17:36:59.922+0000] {taskinstance.py:1662} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='season' AIRFLOW_CTX_TASK_ID='season' AIRFLOW_CTX_EXECUTION_DATE='2024-04-20T17:36:58.575132+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2024-04-20T17:36:58.575132+00:00'
+[2024-04-20T17:36:59.922+0000] {logging_mixin.py:154} INFO - es
+[2024-04-20T17:36:59.922+0000] {python.py:194} INFO - Done. Returned value was: None
+[2024-04-20T17:36:59.927+0000] {taskinstance.py:1400} INFO - Marking task as SUCCESS. dag_id=season, task_id=season, execution_date=20240420T173658, start_date=20240420T173659, end_date=20240420T173659
+[2024-04-20T17:36:59.958+0000] {local_task_job_runner.py:228} INFO - Task exited with return code 0
+[2024-04-20T17:36:59.971+0000] {taskinstance.py:2778} INFO - 1 downstream tasks scheduled from follow-on schedule check
