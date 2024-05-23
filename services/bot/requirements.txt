@@ -7,3 +7,11 @@ pydantic
 requests
 pandas
 prettytable
+pytest
+coverage
+aiogram_tests @ git+https://github.com/Like6po/aiogram_tests.git
+pytest-asyncio
+pytest-cov
+pytest-mock
+mock
+flake8

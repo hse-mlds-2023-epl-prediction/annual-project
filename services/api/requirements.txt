@@ -21,3 +21,5 @@ pydantic_settings
 prettytable
 pandas
 catboost
+redis
+fastapi-cache2[redis]
