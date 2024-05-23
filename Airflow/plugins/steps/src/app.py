@@ -3,6 +3,7 @@ from time import sleep
 
 from steps.src.config import headers
 
+
 def flatten_dict(dict_, parent_key='', separator='_'):
     """ flatten dict
     Input: dict_: dict
@@ -26,6 +27,7 @@ def flatten_dict(dict_, parent_key='', separator='_'):
             output_dict[new_key] = value
 
     return output_dict
+
 
 def get_col_dict(list_dict):
     """ 
@@ -123,3 +125,23 @@ def pars_dictfeature(response_url, seasons, iter, main_info, stats, name_stat='n
             sleep(0.25)
 
     return result
+
+
+
+def convert_data(rows, season):
+    data = []
+    for row in rows:
+        has_ods = len(row['odds'])
+        data.append({
+            'home_name': row['home-name'],
+            'away_name': row['away-name'],
+            'result': row['result'],
+            'home_team_result': row['homeResult'],
+            'away_team_result': row['awayResult'],
+            'home_avg_odds': row['odds'][0]['avgOdds'] if has_ods else 1,
+            'draw_avg_odds': row['odds'][1]['avgOdds'] if has_ods else 1,
+            'away_avg_odds': row['odds'][2]['avgOdds'] if has_ods else 1,
+            'season': season,
+            'date_start_timestamp': row['date-start-timestamp']
+        })
+    return data

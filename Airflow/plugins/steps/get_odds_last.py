@@ -6,7 +6,7 @@ import numpy as np
 import requests
 import json
 
-from steps.src.func import convert_data
+from steps.src.app import convert_data
 from steps.src.features import seasons_odds
 from steps.src.config import headers, conn_id
 from airflow.providers.postgres.hooks.postgres import PostgresHook

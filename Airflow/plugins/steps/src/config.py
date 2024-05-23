@@ -19,5 +19,7 @@ conn_id = 'airflow'
 
 uri = {
     'get_season': 'https://footballapi.pulselive.com/football/competitions',
-    'get_stadium': 'https://footballapi.pulselive.com/football/teams'
+    'get_stadium': 'https://footballapi.pulselive.com/football/teams',
+    'get_bases_games': 'https://footballapi.pulselive.com/football/fixtures',
+    'get_matches': 'https://footballapi.pulselive.com/football/stats/match',
 }

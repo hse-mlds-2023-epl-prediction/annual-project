@@ -10,7 +10,7 @@ from sqlalchemy import MetaData, Table, Column, String, Integer, inspect
 
 def parser(**kwargs):
 
-    #ti = kwargs['ti']
+    # ti = kwargs['ti']
     params = {
         'page': '0',
         'pageSize': '1000',
@@ -23,7 +23,7 @@ def parser(**kwargs):
         if league['abbreviation'] == 'EN_PR':
             value=league['compSeasons']
 
-    #ti.xcom_push(key='json', value=value)
+    # ti.xcom_push(key='json', value=value)
     return value
 
 
