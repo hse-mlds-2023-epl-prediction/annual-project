@@ -1,3 +1,5 @@
+num_seasons = 12
+
 headers = {
     'authority': 'footballapi.pulselive.com',
     'accept': '*/*',
@@ -22,4 +24,6 @@ uri = {
     'get_stadium': 'https://footballapi.pulselive.com/football/teams',
     'get_bases_games': 'https://footballapi.pulselive.com/football/fixtures',
     'get_matches': 'https://footballapi.pulselive.com/football/stats/match',
-}
+    'get_player_stat': 'https://footballapi.pulselive.com/football/stats/team',
+    'get_basic_club': 'https://footballapi.pulselive.com/football/teams',
+    'get_player': 'https://footballapi.pulselive.com/football/players',}

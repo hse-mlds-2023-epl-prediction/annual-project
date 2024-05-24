@@ -2,7 +2,7 @@ import pandas as pd
 import requests
 from time import sleep
 from steps.src.features import col_main
-from steps.src.config import uri, headers, conn_id
+from steps.src.config import uri, headers, conn_id, num_seasons
 from steps.src.app import flatten_dict, list_to_dict, pars_dictline, get_col_dict
 from steps.src.model_table import table_games
 from airflow.providers.postgres.hooks.postgres import PostgresHook
@@ -44,16 +44,14 @@ def get_id_season(**kwargs):
     season_ids_list = [id_tuple[0] for id_tuple in season_ids]
     session.close()
 
-    kwargs['ti'].xcom_push(key='season_ids_list', value=season_ids_list[:12])
+    kwargs['ti'].xcom_push(key='season_ids_list', value=season_ids_list[:num_seasons])
 
 
 def get_matches(**kwargs):
     ti = kwargs['ti']
     season_ids_list = kwargs['ti'].xcom_pull(
         key='season_ids_list', task_ids='get_id_step')
-    
-    season_ids_list = season_ids_list[-1:] # Для отладки / удалить / закоментить
-
+  
     # Парсим основные данные матчи, включая id матчей
     params = {
         'comps': '1',
@@ -129,7 +127,6 @@ def get_matches(**kwargs):
 
     data = pars_dictline(result, col_main)
     df = pd.DataFrame(data, columns=col_main.values())
-    df.to_csv('games.csv', index=False)
 
     df_pickle = pickle.dumps(df)
     df_base64 = base64.b64encode(df_pickle).decode('utf-8')
@@ -167,12 +164,4 @@ def load_data(**kwargs):
     engine = hook.get_sqlalchemy_engine()
 
 
-    df.to_sql('test_games', engine, if_exists='replace', index=False)
-
-    """hook.insert_rows(
-            table="games",
-            replace=True,
-            target_fields=df.columns.tolist(),
-            replace_index=['match_id'],
-            rows=df.values.tolist()
-    )"""
+    df.to_sql('games', engine, if_exists='replace', index=False)

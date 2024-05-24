@@ -9,8 +9,7 @@ from sqlalchemy import MetaData, Table, Column, String, Integer, inspect
 
 
 def parser(**kwargs):
-
-    # ti = kwargs['ti']
+    ti = kwargs['ti']
     params = {
         'page': '0',
         'pageSize': '1000',
@@ -23,12 +22,10 @@ def parser(**kwargs):
         if league['abbreviation'] == 'EN_PR':
             value=league['compSeasons']
 
-    # ti.xcom_push(key='json', value=value)
-    return value
+    ti.xcom_push(key='json', value=value)
 
 
-def create_db():
-    
+def create_db():    
     metadata = MetaData()
     table_season = Table(
         'seasons', metadata,
@@ -42,10 +39,9 @@ def create_db():
         metadata.create_all(engine)
 
 
-def load_data(value, **kwargs):
-
-    #ti = kwargs['ti']
-    #value = ti.xcom_pull(key='json', task_ids='parser')
+def load_data(**kwargs):
+    ti = kwargs['ti']
+    value = ti.xcom_pull(key='json', task_ids='parser')
     data = pd.DataFrame(value)
     hook = PostgresHook(conn_id)
 
