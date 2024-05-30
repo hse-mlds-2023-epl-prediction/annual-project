@@ -1,5 +1,5 @@
 from airflow.operators.python import PythonOperator
-from steps.get_basic_club import get_basic_club, load_basic_club
+from steps.pars.get_basic_club import get_basic_club, load_basic_club
 import pendulum
 
 from airflow import DAG

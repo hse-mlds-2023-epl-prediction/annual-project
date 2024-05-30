@@ -1,5 +1,5 @@
 from airflow.operators.python import PythonOperator
-from steps.get_stadium import parser, create_db, load_data
+from steps.pars.get_stadium import parser, create_db, load_data
 import pendulum
 
 from airflow import DAG

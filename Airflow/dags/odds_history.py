@@ -1,5 +1,5 @@
 from airflow.operators.python import PythonOperator
-from steps.get_odds_last import parser, create_db
+from steps.pars.get_odds_last import parser, create_db
 import pendulum
 
 from airflow import DAG

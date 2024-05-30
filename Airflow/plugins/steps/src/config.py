@@ -26,5 +26,34 @@ uri = {
     'get_matches': 'https://footballapi.pulselive.com/football/stats/match',
     'get_player_stat': 'https://footballapi.pulselive.com/football/stats/team',
     'get_basic_club': 'https://footballapi.pulselive.com/football/teams',
-    'get_player': 'https://footballapi.pulselive.com/football/players',
-    'get_stat_club': 'https://footballapi.pulselive.com/football/stats/team'}
+    'get_player': 'https://footballapi.pulselive.com/football/stats/players',
+    'get_stat_club': 'https://footballapi.pulselive.com/football/stats/team'
+    }
+
+del_game_col = [
+    'gameweek_compSeason_competition_source',
+    'gameweek_compSeason_competition_level',
+    'gameweek_compSeason_competition_description',
+    'gameweek_compSeason_competition_abbreviation',
+    'gameweek_compSeason_competition_id',
+    'ground_source',
+    'kickoff_completeness',
+    'provisionalKickoff_completeness',
+    'teams_team_1_club_name',
+    'teams_team_1_club_shortName',
+    'teams_team_1_teamType',
+    'teams_team_1_shortName',
+    'teams_team_1_id',
+    'teams_team_2_club_name',
+    'teams_team_2_club_shortName',
+    'teams_team_2_teamType',
+    'teams_team_2_shortName',
+    'teams_team_2_id',
+    'neutralGround',
+    'replay',
+    'status',
+    'phase',
+    'fixtureType',
+    'extraTime',
+    'shootout',
+]

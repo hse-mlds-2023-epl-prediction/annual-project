@@ -1,5 +1,5 @@
 from airflow.operators.python import PythonOperator
-from steps.get_matches import get_id_season, get_matches, create_db, load_data
+from steps.pars.get_matches import get_id_season, get_matches, create_db, load_data
 import pendulum
 
 from airflow import DAG

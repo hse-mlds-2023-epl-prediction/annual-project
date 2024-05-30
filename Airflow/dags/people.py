@@ -1,6 +1,6 @@
 from airflow.operators.python import PythonOperator
-from steps.get_people import get_id_season, get_club_id, parser
-from steps.get_people import load_players, load_goalkippers, load_officials
+from steps.pars.get_people import get_id_season, get_club_id, parser
+from steps.pars.get_people import load_players, load_goalkippers, load_officials
 import pendulum
 
 from airflow import DAG

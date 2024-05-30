@@ -11,3 +11,5 @@
 .idea
 Airflow/.env
 Airflow/logs
+*logs
+*env
