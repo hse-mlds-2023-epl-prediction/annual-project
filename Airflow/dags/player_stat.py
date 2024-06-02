@@ -1,5 +1,5 @@
 from airflow.operators.python import PythonOperator
-from steps.pars.get_player_stat import get_id_season, get_club_id, parser, load_data
+from steps.pars.get_player_stat import get_id_season, get_idplayer, parser, load_data
 import pendulum
 
 from airflow import DAG
@@ -16,9 +16,9 @@ with DAG(
         python_callable=get_id_season,
         provide_context=True)
 
-    get_club_id = PythonOperator(
-        task_id='get_club_id',
-        python_callable=get_club_id,
+    get_idplayer = PythonOperator(
+        task_id='get_idplayer',
+        python_callable=get_idplayer,
         provide_context=True,)
 
     parser = PythonOperator(
@@ -31,4 +31,4 @@ with DAG(
         python_callable=load_data,
         provide_context=True,)
 
-    [get_id_season, get_club_id] >> parser >> load_data
+    [get_id_season, get_idplayer] >> parser >> load_data

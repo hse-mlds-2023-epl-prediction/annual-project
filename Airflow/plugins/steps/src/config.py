@@ -1,5 +1,10 @@
 num_seasons = 12
 
+mlflow_exp = {
+    'df_base': '6',
+
+}
+
 headers = {
     'authority': 'footballapi.pulselive.com',
     'accept': '*/*',
@@ -26,8 +31,9 @@ uri = {
     'get_matches': 'https://footballapi.pulselive.com/football/stats/match',
     'get_player_stat': 'https://footballapi.pulselive.com/football/stats/team',
     'get_basic_club': 'https://footballapi.pulselive.com/football/teams',
-    'get_player': 'https://footballapi.pulselive.com/football/stats/players',
-    'get_stat_club': 'https://footballapi.pulselive.com/football/stats/team'
+    'get_player': 'https://footballapi.pulselive.com/football/stats/player',
+    'get_stat_club': 'https://footballapi.pulselive.com/football/stats/team',
+    'get_base_player': 'https://footballapi.pulselive.com/football/players'
     }
 
 del_game_col = [

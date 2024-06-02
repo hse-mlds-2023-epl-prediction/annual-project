@@ -5,16 +5,18 @@ import requests
 from collections import defaultdict
 from time import sleep
 from steps.src.features import col_club_stat
-from steps.src.config import uri, headers, conn_id, num_seasons, del_game_col
+from steps.src.config import uri, headers, conn_id, num_seasons, del_game_col, mlflow_exp
 from steps.src.app import pars_dictline, pars_dictfeature
 from steps.src.model_table import table_games
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
+from pathlib import Path
 import base64
 import os
 import pickle
+import mlflow
 
 
 load_dotenv()
@@ -50,7 +52,7 @@ def prepare_club(**kwargs):
     
     df_pickle = pickle.dumps(df)
     df_base64 = base64.b64encode(df_pickle).decode('utf-8')
-    kwargs['ti'].xcom_push(key='clubs_stat', value=df_base64)
+    kwargs['ti'].xcom_push(key='prepare_club', value=df_base64)
     
 
 def prepare_game(**kwargs):
@@ -80,8 +82,45 @@ def prepare_game(**kwargs):
     df.fillna(0)
     df_pickle = pickle.dumps(df)
     df_base64 = base64.b64encode(df_pickle).decode('utf-8')
-    kwargs['ti'].xcom_push(key='df', value=df_base64)
+    kwargs['ti'].xcom_push(key='prepare_game', value=df_base64)
     
+
+def get_players(**kwargs):
+    ti = kwargs['ti']
+    conn_str = f'postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DBNAME}'
+    engine = create_engine(conn_str)
+    conn = engine.connect()
+    
+    sql = """
+    SELECT *
+    FROM players
+    """
+    
+    df = pd.read_sql(sql, conn)
+    print(df)   
+    df_pickle = pickle.dumps(df)
+    df_base64 = base64.b64encode(df_pickle).decode('utf-8')
+    kwargs['ti'].xcom_push(key='get_players', value=df_base64)
+
+
+def get_goalkippers(**kwargs):
+    ti = kwargs['ti']
+    conn_str = f'postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DBNAME}'
+    engine = create_engine(conn_str)
+    conn = engine.connect()
+    
+    sql = """
+    SELECT *
+    FROM goalkippers
+    """
+    
+    df = pd.read_sql(sql, conn)
+    print(df)   
+    df_pickle = pickle.dumps(df)
+    df_base64 = base64.b64encode(df_pickle).decode('utf-8')
+    kwargs['ti'].xcom_push(key='get_goalkippers', value=df_base64)
+
+
     
 def prepare_players(**kwargs):
     # player_team
@@ -105,10 +144,10 @@ def prepare_players(**kwargs):
                                                              '_appearances'
                                                              ]].fillna(0)
     df['per_wins'] = df['_wins'] / df['_appearances']
-    print(df)
+    print(df.columns)
     df_pickle = pickle.dumps(df)
     df_base64 = base64.b64encode(df_pickle).decode('utf-8')
-    kwargs['ti'].xcom_push(key='player_team', value=df_base64)
+    kwargs['ti'].xcom_push(key='prepare_players', value=df_base64)
     
     
 def get_df(**kwargs):
@@ -120,19 +159,29 @@ def get_df(**kwargs):
     
     # Загрузка 
     df_base64 = kwargs['ti'].xcom_pull(
-        key='clubs_stat', task_ids='prepare_club')
+        key='prepare_club', task_ids='prepare_club')
     df_pickle = base64.b64decode(df_base64)
     df_club = pickle.loads(df_pickle)
     
     df_base64 = kwargs['ti'].xcom_pull(
-        key='df', task_ids='prepare_game')
+        key='prepare_game', task_ids='prepare_game')
     df_pickle = base64.b64decode(df_base64)
     df = pickle.loads(df_pickle)
     
     df_base64 = kwargs['ti'].xcom_pull(
-        key='player_team', task_ids='prepare_players')
+        key='prepare_players', task_ids='prepare_players')
+    df_pickle = base64.b64decode(df_base64)
+    player_team_ = pickle.loads(df_pickle)
+
+    df_base64 = kwargs['ti'].xcom_pull(
+        key='get_players', task_ids='get_players')
     df_pickle = base64.b64decode(df_base64)
     player_team = pickle.loads(df_pickle)
+
+    df_base64 = kwargs['ti'].xcom_pull(
+        key='get_goalkippers', task_ids='get_goalkippers')
+    df_pickle = base64.b64decode(df_base64)
+    df_gk = pickle.loads(df_pickle)
     
     sql_player = "SELECT * FROM players"
     df_player = pd.read_sql(sql_player, conn)
@@ -186,13 +235,18 @@ def get_df(**kwargs):
                           'gameweek_compSeason_label',
                           'teams_team_1_name',
                           'teams_team_2_name',
-                          'ground_name',
                           'team_1_hue',
                           'month',
                           'day_week',
                           'hour',
                           'ground_id']
-    
+    df.drop('ground_name', axis=1, inplace=True)
+    # Преобразуем временные данные
+    df['month'] = df['kickoff_label'].apply(lambda x: x.split()[2])
+    df['day_week'] = df['kickoff_label'].apply(lambda x: x.split()[0])
+    df['hour'] = df['kickoff_label'].apply(lambda x: x.split()[4].split(':')[0])
+    feature_list_games.extend(['month', 'day_week', 'hour', 'ground_id'])
+
     # Создаем лаг на статистику команды в 1 сезон
     list_na = list(df_club.isna().sum()[df_club.isna().sum() > 0].index)
     df_club[list_na] = df_club[list_na].fillna(df_club[df_club['season']!=2023][list_na].mean())
@@ -232,6 +286,7 @@ def get_df(**kwargs):
                      'club_name_lag_team2'], axis=1, inplace=True)
     
     # Работаем с статистикой игроков
+    player_team['season'] = player_team['season'].astype(int)
     player_team_t = player_team.copy()
     player_team_t['season'] = player_team_t['season'] + 1
     
@@ -373,3 +428,26 @@ def get_df(**kwargs):
     df_general = pd.merge(df_general, df_game_lag, how='left', on=['match_id', 'teams_team_1_name', 'teams_team_2_name'])
     df_general.sort_values(by=['match_id'], inplace=True)
     print(df_general)
+    df_pickle = pickle.dumps(df_general)
+    df_base64 = base64.b64encode(df_pickle).decode('utf-8')
+    kwargs['ti'].xcom_push(key='get_df', value=df_base64)
+
+
+def tracking(**kwargs):
+    df_base64 = kwargs['ti'].xcom_pull(
+        key='get_df', task_ids='get_df')
+    df_pickle = base64.b64decode(df_base64)
+    df = pickle.loads(df_pickle)
+
+    path = 'data'
+    name_df = 'df.csv'
+    mlflow.set_tracking_uri(uri='http://5.104.75.226:5000')
+    
+    with mlflow.start_run(experiment_id=str(mlflow_exp['df_base'])) as run:
+        if not os.path.exists(path):
+            os.makedirs(path)
+        artifact_path = Path(path, name_df)
+        df.to_csv(artifact_path, index=False)
+        mlflow.log_artifact(artifact_path)
+
+    print(print(f"Датасет залогирован в ране {run.info.run_id}"))

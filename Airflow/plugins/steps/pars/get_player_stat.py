@@ -2,7 +2,7 @@
 import pandas as pd
 import requests
 from time import sleep
-from steps.src.features import col_main, col_player_stat
+from steps.src.features import col_main, col_player_stat, col_start_player
 from steps.src.config import uri, headers, conn_id, num_seasons
 from steps.src.app import flatten_dict, list_to_dict, pars_dictline, pars_dictfeature
 from steps.src.model_table import table_games
@@ -24,6 +24,48 @@ HOST = os.getenv('HOST')
 PORT = os.getenv('PORT')
 
 
+def get_idplayer(**kwargs):
+    ti = kwargs['ti']
+    page = 0
+
+    params = {
+        'pageSize': '200',
+        'compSeasons': '578',
+        'altIds': 'true',
+        'page': str(page),
+        'type': 'player',
+        'id': '-1',
+        'compSeasonId': '578',
+    }
+    response = requests.get(uri['get_base_player'], params=params, headers=headers)
+
+    players_list = []
+    s = requests.Session()
+
+    while len(response.json()['content']) > 0:
+        players_list.extend(response.json()['content'])
+
+        page += 1
+
+        params = {
+            'pageSize': '200',
+            'compSeasons': '578',
+            'altIds': 'true',
+            'page': str(page),
+            'type': 'player',
+            'id': '-1',
+            'compSeasonId': '578',
+        }
+        response = s.get(uri['get_base_player'], params=params, headers=headers)
+
+    data = pars_dictline(players_list, col_start_player)
+    df_start_player = pd.DataFrame(data, columns=col_start_player.values())
+
+    data = list(df_start_player['id'].astype(int))
+    print(data)
+    ti.xcom_push(key='get_idplayer', value=data)
+
+
 def get_id_season(**kwargs):
     ti = kwargs['ti']
     conn_str = f'postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DBNAME}'
@@ -34,13 +76,14 @@ def get_id_season(**kwargs):
     # Выполнение запроса для получения всех id из таблицы seasons
     result = session.execute(text("SELECT id FROM seasons"))
     season_ids_list = [int(row[0]) for row in result.fetchall()][:num_seasons]
+    print(season_ids_list)
     session.close()
 
     kwargs['ti'].xcom_push(
         key='season_ids_list', value=season_ids_list[:num_seasons])
 
 
-def get_club_id(**kwargs):
+"""def get_club_id(**kwargs):
     ti = kwargs['ti']
     conn_str = f'postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DBNAME}'
     engine = create_engine(conn_str)
@@ -54,22 +97,22 @@ def get_club_id(**kwargs):
     session.close()
 
     kwargs['ti'].xcom_push(
-        key='club_ids_list', value=club_ids_list)
+        key='club_ids_list', value=club_ids_list)"""
 
 
 def parser(**kwargs):
     ti = kwargs['ti']
     season_ids_list = kwargs['ti'].xcom_pull(
         key='season_ids_list', task_ids='get_id_season')
-    club_id = kwargs['ti'].xcom_pull(
-        key='club_ids_list', task_ids='get_club_id')
+    player_id = kwargs['ti'].xcom_pull(
+        key='get_idplayer', task_ids='get_idplayer')
 
     stat_list = pars_dictfeature(uri['get_player'],
-                                 season_ids_list,
-                                 club_id,
-                                 'entity',
-                                 'stats',
-                                 )
+                                    season_ids_list,
+                                    player_id, 
+                                    main_info = 'entity',
+                                    stats = 'stats'
+                                    )
 
     data = pars_dictline(stat_list, col_player_stat)
     player_stat = pd.DataFrame(data, columns=col_player_stat.values())
