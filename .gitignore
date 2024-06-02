@@ -11,3 +11,4 @@
 .idea
 Airflow/.env
 Airflow/logs
+*pycache*
