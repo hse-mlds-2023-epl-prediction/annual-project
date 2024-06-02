@@ -163,8 +163,8 @@ club_stat.to_csv(filepath, index=False)
 #=============================get info about players========================
 
 response_url = 'https://footballapi.pulselive.com/football/stats/player'
-iter = player_id
-list_player = pars_dictfeature(response_url, seasons, iter, main_info, stats, name_stat='name', value_stat='value')
+pleayer_list = player_id
+list_player = pars_dictfeature(response_url, seasons, pleayer_list, main_info, stats, name_stat='name', value_stat='value')
 
 data = pars_dictline(list_player, col_player_stat)
 player_stat = pd.DataFrame(data, columns=col_player_stat.values())
