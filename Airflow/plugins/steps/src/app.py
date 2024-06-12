@@ -1,6 +1,7 @@
 import requests
 from time import sleep
 import pandas as pd
+import numpy as np
 from category_encoders import TargetEncoder
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.compose import ColumnTransformer
@@ -217,3 +218,10 @@ def pca_pipeline(df: pd.DataFrame,
     X_processed = pipeline.fit_transform(df, y)
 
     return X_processed, pipeline
+
+
+def compute_class_weights(y):
+    class_counts = np.bincount(y)
+    total_samples = np.sum(class_counts)
+    class_weights = total_samples / (len(class_counts) * class_counts)
+    return class_weights

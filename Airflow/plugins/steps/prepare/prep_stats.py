@@ -2,6 +2,7 @@
 import pandas as pd
 import numpy as np
 import requests
+from dateutil import parser
 from collections import defaultdict
 from time import sleep
 from steps.src.features import col_club_stat
@@ -147,8 +148,8 @@ def prepare_players(**kwargs):
     print(df.columns)
     df_pickle = pickle.dumps(df)
     df_base64 = base64.b64encode(df_pickle).decode('utf-8')
-    kwargs['ti'].xcom_push(key='prepare_players', value=df_base64)
-    
+    kwargs['ti'].xcom_push(key='prepare_players', value=df_base64)    
+  
     
 def get_df(**kwargs):
     # Инициализация
@@ -188,6 +189,9 @@ def get_df(**kwargs):
     
     sql_goal = "SELECT * FROM goalkippers"
     df_goal = pd.read_sql(sql_goal, conn)
+    
+    sql_odds = "SELECT * FROM odds"
+    df_odds = pd.read_sql(sql_odds, conn)
 
     
     home_games = df[['gameweek_compSeason_label', 'teams_team_1_name']].rename(
@@ -245,7 +249,7 @@ def get_df(**kwargs):
     df['month'] = df['kickoff_label'].apply(lambda x: x.split()[2])
     df['day_week'] = df['kickoff_label'].apply(lambda x: x.split()[0])
     df['hour'] = df['kickoff_label'].apply(lambda x: x.split()[4].split(':')[0])
-    feature_list_games.extend(['month', 'day_week', 'hour', 'ground_id'])
+    feature_list_games.extend(['kickoff_label', 'month', 'day_week', 'hour', 'ground_id'])
 
     # Создаем лаг на статистику команды в 1 сезон
     list_na = list(df_club.isna().sum()[df_club.isna().sum() > 0].index)
@@ -294,8 +298,18 @@ def get_df(**kwargs):
     df_player_lag = pd.merge(player_team[['season', 'team', 'player_id', 'position', 'name']],
                              player_team_t.drop(['player_id', 'position', 'team'],
                                                 axis=1), on=['season', 'name'], how='left')
-    df_player_lag = df_player_lag[(df_player_lag['season'] != df_player_lag['season'].max()) & (df_player_lag['season'] != df_player_lag['season'].min())]
-
+    df_player_lag = df_player_lag[df_player_lag['season'] != df_player_lag['season'].min()]
+    
+    # Сдвигаем статистику вратарей на год
+    df_goal['season'] = pd.to_numeric(df_goal['season'], errors='coerce')
+    df_goal_t = df_goal.copy()
+    df_goal_t['season'] = df_goal_t['season'] + 1
+    df_goal_lag = pd.merge(df_goal[['season', 'team', 'player_id', 'position', 'name']],
+                        df_goal_t.drop(['player_id', 'position', 'team'], axis=1),
+                        on=['season', 'name'], how='left')
+    df_goal_lag = df_goal_lag[df_goal_lag['season'] != df_goal_lag['season'].min()]
+    df_goal_lag
+    
     def flatten_team(df, team_dict, col, type):
         
         df = df[col]
@@ -311,24 +325,24 @@ def get_df(**kwargs):
     col_gk = ['name', 'appearances', 'height',	'weight', 'saves', 'cleanSheets', 'goalsConceded']
 
     # Работаем с игроками
-    for season in list(player_team['season'].unique()):
-        for team in player_team['team'].unique():
-            if player_team[(player_team['season']==season) & (player_team['team']==team)].shape[0] > 11:
+    for season in list(df_player_lag['season'].unique()):
+        for team in df_player_lag['team'].unique():
+            if df_player_lag[(df_player_lag['season']==season) & (df_player_lag['team']==team)].shape[0] > 11:
 
                 team_dict['season'].append(season)
                 team_dict['team'].append(team)
 
                 #players
-                df_f = player_team[(player_team['season']==int(season)) & (player_team['team']==str(team)) & (player_team['position']=='F')].sort_values(by='appearances', ascending=False)[:3]
-                df_m = player_team[(player_team['season']==int(season)) & (player_team['team']==team) & (player_team['position']=='M')].sort_values(by='appearances', ascending=False)[:6]
-                df_d = player_team[(player_team['season']==int(season)) & (player_team['team']==team) & (player_team['position']=='D')].sort_values(by='appearances', ascending=False)[:7]
+                df_f = df_player_lag[(df_player_lag['season']==int(season)) & (df_player_lag['team']==str(team)) & (df_player_lag['position']=='F')].sort_values(by='appearances', ascending=False)[:3]
+                df_m = df_player_lag[(df_player_lag['season']==int(season)) & (df_player_lag['team']==team) & (df_player_lag['position']=='M')].sort_values(by='appearances', ascending=False)[:6]
+                df_d = df_player_lag[(df_player_lag['season']==int(season)) & (df_player_lag['team']==team) & (df_player_lag['position']=='D')].sort_values(by='appearances', ascending=False)[:7]
 
                 team_dict = flatten_team(df_f, team_dict, col_players, 'F')
                 team_dict = flatten_team(df_m, team_dict, col_players, 'M')
                 team_dict = flatten_team(df_d, team_dict, col_players, 'D')
 
                 #goalkeepers
-                df_gk = df_goal[(df_goal['season']==int(season)) & (df_goal['team']==team)].sort_values(by='appearances', ascending=False)[:1]
+                df_gk = df_goal_lag[(df_goal_lag['season']==int(season)) & (df_goal_lag['team']==team)].sort_values(by='appearances', ascending=False)[:1]
                 team_dict = flatten_team(df_gk, team_dict, col_gk, 'GK')
 
     df_team_players = pd.DataFrame(team_dict)
@@ -374,7 +388,7 @@ def get_df(**kwargs):
             df_game_team = pd.concat([df_game_team, df_temp], axis=0)
     df_game_team.sort_values(by='match_id', inplace=True) 
     
-    # 3 лагав результатах матчей между двумя командами
+    # 3 лага в результатах матчей между двумя командами
     n_lag = 3
     df_game_lag = pd.DataFrame(columns=df_game_team.columns.tolist() + ['game_lag_' + str(i) for i in range(1, n_lag+1)])
     for team_1 in df_game_team['teams_team_1_name'].unique():
@@ -400,13 +414,15 @@ def get_df(**kwargs):
     df_general = pd.merge(df_general,
                           df_team_players,
                           left_on=['teams_team_1_name', 'gameweek_compSeason_label'],
-                          right_on=['team', 'season'], how='left')
+                          right_on=['team', 'season'],
+                          how='left')
     
     df_general = pd.merge(df_general,
                           df_team_players,
                           left_on=['teams_team_2_name', 'gameweek_compSeason_label'],
                           right_on=['team', 'season'],
-                          how='left', suffixes=('_team_1', '_team_2'))
+                          how='left',
+                          suffixes=('_team_1', '_team_2'))
 
     df_general.drop(['season_team_1', 'season_team_2', 'team_team_1', 'team_team_2'], axis=1, inplace=True)
     
@@ -426,8 +442,24 @@ def get_df(**kwargs):
     df_general.drop(['team_team_1', 'team_team_2'], axis=1, inplace=True)
 
     df_general = pd.merge(df_general, df_game_lag, how='left', on=['match_id', 'teams_team_1_name', 'teams_team_2_name'])
+        
+    df_general['kickoff_label'] = pd.to_datetime(df_odds['date']).dt.date
+    
+    df_odds['date'] = pd.to_datetime(df_odds['date']).dt.date
+    df_general = pd.merge(df_general,
+                          df_odds,
+                          how='left',
+                          left_on=['teams_team_1_name', 'teams_team_2_name', 'kickoff_label'],
+                          right_on=['home_name', 'away_name', 'date'])
+    
+    drp_list = ['home_name', 'away_name', 'date', 'kickoff_label', 'result_team_1']    
+    df_general.drop(drp_list, axis=1, inplace=True)
+    df_general = df_general[df_general['gameweek_compSeason_label'] != df_general['gameweek_compSeason_label'].min()]
     df_general.sort_values(by=['match_id'], inplace=True)
-    print(df_general)
+    
+    duplicate_columns = ['month.1', 'day_week.1', 'hour.1', 'ground_id.1']
+    df_general.drop(columns=duplicate_columns, inplace=True, errors='ignore')
+
     df_pickle = pickle.dumps(df_general)
     df_base64 = base64.b64encode(df_pickle).decode('utf-8')
     kwargs['ti'].xcom_push(key='get_df', value=df_base64)
@@ -441,7 +473,7 @@ def tracking(**kwargs):
 
     path = 'data'
     name_df = 'df.csv'
-    mlflow.set_tracking_uri(uri='http://5.104.75.226:5000')
+    
     
     with mlflow.start_run(experiment_id=str(mlflow_exp['df_base'])) as run:
         if not os.path.exists(path):

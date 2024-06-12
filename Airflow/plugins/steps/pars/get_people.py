@@ -8,7 +8,6 @@ from steps.src.app import flatten_dict, list_to_dict, pars_dictline, pars_dictfe
 from steps.src.model_table import table_games
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from sqlalchemy import MetaData, Table, Column, String, Boolean, Integer, inspect, create_engine, text
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 from collections import defaultdict
@@ -152,9 +151,7 @@ def parser(**kwargs):
     kwargs['ti'].xcom_push(key='goalkippers', value=df_base64_goalkippers)
 
     officials = pd.DataFrame(officials)
-    df_pickle_officials = pickle.dumps(officials)
-    df_base64_officials = base64.b64encode(df_pickle_officials).decode('utf-8')
-    kwargs['ti'].xcom_push(key='officials', value=df_base64_officials)
+ 
 
 
 def load_players(**kwargs):

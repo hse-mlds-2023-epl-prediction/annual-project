@@ -9,7 +9,76 @@ stadium_col = [
     'longitude'
 ]
 
-seasons_odds = [
+odds_map_name =  {'Arsenal': 'Arsenal',
+                    'Aston Villa': 'Aston Villa',
+                    'Bournemouth': 'Bournemouth',
+                    'Brentford': 'Brentford',
+                    'Brighton': 'Brighton & Hove Albion',
+                    'Burnley': 'Burnley',
+                    'Cardiff': 'Cardiff City',
+                    'Chelsea': 'Chelsea',
+                    'Crystal Palace': 'Crystal Palace',
+                    'Everton': 'Everton',
+                    'Fulham': 'Fulham',
+                    'Huddersfield': 'Huddersfield Town',
+                    'Hull': 'Hull City',
+                    'Leeds': 'Leeds United',
+                    'Leicester': 'Leicester City',
+                    'Liverpool': 'Liverpool',
+                    'Luton': 'Luton Town',
+                    'Manchester City': 'Manchester City',
+                    'Manchester Utd': 'Manchester United',
+                    'Middlesbrough': 'Middlesbrough',
+                    'Newcastle': 'Newcastle United',
+                    'Norwich': 'Norwich City',
+                    'Nottingham': 'Nottingham Forest',
+                    'QPR': 'Queens Park Rangers',
+                    'Sheffield Utd': 'Sheffield United',
+                    'Southampton': 'Southampton',
+                    'Stoke': 'Stoke City',
+                    'Sunderland': 'Sunderland',
+                    'Swansea': 'Swansea City',
+                    'Tottenham': 'Tottenham Hotspur',
+                    'Watford': 'Watford',
+                    'West Brom': 'West Bromwich Albion',
+                    'West Ham': 'West Ham United',
+                    'Wolves': 'Wolverhampton Wanderers'}
+
+cookies_odd = {
+    'op_cookie-test': 'ok',
+    'op_user_cookie': '7597410855',
+    'op_user_hash': '35f97067bd7e85cbaa8f006219e40b74',
+    'op_user_time': '1708675248',
+    'op_user_time_zone': '3',
+    'op_user_full_time_zone': '41',
+    'OptanonAlertBoxClosed': '2024-02-23T08:03:09.345Z',
+    'eupubconsent-v2': 'CP6bRogP6bRogAcABBENAoEsAP_gAAAAAChQg1NX_H__bW9r8Xr3aft0eY1P99j77sQxBhfJE-4FzLvW_JwXx2ExNA26tqIKmRIEu3ZBIQFlHJDUTVigaogVryDMYkGcgTNKJ6BkiFMRM2dYCF5vmQtj-QKY5vp9d3fx2D-t_dv83dzyz8VHn3e5fme0cJCdA58tDfv9bRKb-5IPd_58v4v09F_rk2_eTVl_tevp7B-uft87_XU-9_ffeAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAgSACAvMdABAXmSgAgLzKQAQF5gAAA.f_wAAAAAAAAA',
+    '_ga': 'GA1.1.273426941.1708675381',
+    '_sg_b_n': '1708761104999',
+    '_sg_b_p': '%2Ffootball%2Fengland%2Fpremier-league-2021-2022%2Fresults%2F',
+    '_sg_b_v': '6%3B25721%3B1708786459',
+    'OptanonConsent': 'isGpcEnabled=0&datestamp=Sat+Feb+24+2024+17%3A54%3A23+GMT%2B0300+(Moscow+Standard+Time)&version=202401.1.0&browserGpcFlag=0&isIABGlobal=false&consentId=42fe7d70-e5dd-4748-99c5-a7ca36036812&interactionCount=2&landingPath=NotLandingPage&groups=C0001%3A1%2CC0002%3A1%2CC0004%3A1%2CV2STACK42%3A1&hosts=H194%3A1%2CH302%3A1%2CH236%3A1%2CH198%3A1%2CH203%3A1%2CH190%3A1%2CH301%3A1%2CH303%3A1%2CH304%3A1%2CH230%3A1%2CH305%3A1&genVendors=V2%3A1%2C&AwaitingReconsent=false&geolocation=NL%3BNH',
+    '_ga_5YY4JY41P1': 'GS1.1.1708786457.3.1.1708786463.54.0.0',
+}
+
+headers_odd = {
+    'authority': 'www.oddsportal.com',
+    'accept': 'application/json, text/plain, */*',
+    'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+    'content-type': 'application/json',
+    # 'cookie': 'op_cookie-test=ok; op_user_cookie=7597410855; op_user_hash=35f97067bd7e85cbaa8f006219e40b74; op_user_time=1708675248; op_user_time_zone=3; op_user_full_time_zone=41; OptanonAlertBoxClosed=2024-02-23T08:03:09.345Z; eupubconsent-v2=CP6bRogP6bRogAcABBENAoEsAP_gAAAAAChQg1NX_H__bW9r8Xr3aft0eY1P99j77sQxBhfJE-4FzLvW_JwXx2ExNA26tqIKmRIEu3ZBIQFlHJDUTVigaogVryDMYkGcgTNKJ6BkiFMRM2dYCF5vmQtj-QKY5vp9d3fx2D-t_dv83dzyz8VHn3e5fme0cJCdA58tDfv9bRKb-5IPd_58v4v09F_rk2_eTVl_tevp7B-uft87_XU-9_ffeAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAgSACAvMdABAXmSgAgLzKQAQF5gAAA.f_wAAAAAAAAA; _ga=GA1.1.273426941.1708675381; _sg_b_n=1708761104999; _sg_b_p=%2Ffootball%2Fengland%2Fpremier-league-2021-2022%2Fresults%2F; _sg_b_v=6%3B25721%3B1708786459; OptanonConsent=isGpcEnabled=0&datestamp=Sat+Feb+24+2024+17%3A54%3A23+GMT%2B0300+(Moscow+Standard+Time)&version=202401.1.0&browserGpcFlag=0&isIABGlobal=false&consentId=42fe7d70-e5dd-4748-99c5-a7ca36036812&interactionCount=2&landingPath=NotLandingPage&groups=C0001%3A1%2CC0002%3A1%2CC0004%3A1%2CV2STACK42%3A1&hosts=H194%3A1%2CH302%3A1%2CH236%3A1%2CH198%3A1%2CH203%3A1%2CH190%3A1%2CH301%3A1%2CH303%3A1%2CH304%3A1%2CH230%3A1%2CH305%3A1&genVendors=V2%3A1%2C&AwaitingReconsent=false&geolocation=NL%3BNH; _ga_5YY4JY41P1=GS1.1.1708786457.3.1.1708786463.54.0.0',
+    'referer': 'https://www.oddsportal.com/football/england/premier-league-2021-2022/results/',
+    'sec-ch-ua': '"Not A(Brand";v="99", "Google Chrome";v="121", "Chromium";v="121"',
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': '"macOS"',
+    'sec-fetch-dest': 'empty',
+    'sec-fetch-mode': 'cors',
+    'sec-fetch-site': 'same-origin',
+    'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+    'x-requested-with': 'XMLHttpRequest',
+}
+
+seasons_odd = [
     {'id': 'jDTEm9zs', 'name': '2023-2024'},
     {'id': 'nmP0jyrt', 'name': '2022-2023'},
     {'id': 'tdkpynmB', 'name': '2021-2022'},
@@ -22,6 +91,7 @@ seasons_odds = [
     {'id': 'hK4hu76a', 'name': '2014-2015'},
     {'id': 'OtIGJDpL', 'name': '2013-2014'}
 ]
+
 team_id = [
         1,
         2,

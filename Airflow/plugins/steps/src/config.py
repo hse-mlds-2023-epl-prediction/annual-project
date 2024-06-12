@@ -2,6 +2,7 @@ num_seasons = 12
 
 mlflow_exp = {
     'df_base': '6',
+    'optuna': '7'
 
 }
 

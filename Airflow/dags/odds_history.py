@@ -1,5 +1,5 @@
 from airflow.operators.python import PythonOperator
-from steps.pars.get_odds_last import parser, create_db
+from steps.pars.get_odds_last import parser_odds, get_clubs, prepare, load_data
 import pendulum
 
 from airflow import DAG
@@ -10,7 +10,9 @@ with DAG(
     schedule='@once',
 ) as dag:
         # инициализируем задачи DAG, указывая параметр python_callable
-        parser_step = PythonOperator(task_id='parser', python_callable=parser)
-        create_db_step = PythonOperator(task_id='create_db', python_callable=create_db)
-        #load_data_step = PythonOperator(task_id='load_data', python_callable=load_data)
-        parser_step >> create_db_step
+        parser_odds = PythonOperator(task_id='parser_odds', python_callable=parser_odds)
+        get_clubs = PythonOperator(task_id='get_clubs', python_callable=get_clubs)
+        prepare = PythonOperator(task_id='prepare', python_callable=prepare)
+        load_data = PythonOperator(task_id='load_data', python_callable=load_data)
+        [parser_odds, get_clubs] >> prepare >> load_data
+        
