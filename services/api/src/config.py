@@ -30,7 +30,6 @@ class Settings(BaseSettings):
 
     redis_host: str
     redis_port: int
-
     db_host: str
     db_port: str
     db_user: str
