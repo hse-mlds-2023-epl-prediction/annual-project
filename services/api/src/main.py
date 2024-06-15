@@ -1,9 +1,6 @@
+from datetime import datetime, timedelta
 from typing import List
 from fastapi import FastAPI, Depends
-
-from src.footballapi import get_game_by_limit, get_games_tomorrow
-from src.footballapi import get_games_today, get_games_today_predict
-from src.footballapi import get_games_tomorrow_predict, get_games_predict
 from src.footballapi import get_favorite, helthy_services, add_comand
 from src.models import GameInfo, GameInfoWithPrediction, Favorite
 from src.stats import stats, StatInfo
@@ -12,7 +9,7 @@ from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from fastapi_cache.decorator import cache
 from redis import asyncio as aioredis
-from sqlalchemy import Column, Integer, Float, String, create_engine
+from sqlalchemy import Column, Integer, JSON, DateTime, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 from databases import Database
@@ -36,7 +33,8 @@ class GameInfoEntity(Base):
     away = Column(String)
     ground = Column(String)
     predict = Column(Integer, nullable=True)
-    proba = Column(Float, nullable=True)
+    proba = Column(JSON, nullable=True)
+    date = Column(DateTime, default=datetime.utcnow)
 
 
 Base.metadata.create_all(bind=engine)
@@ -51,12 +49,18 @@ def get_db():
 
 @app.get('/games')
 @cache(expire=DEFAULT_CACHE_TTL)
-async def games(limit: int = 10, db: Session = Depends(get_db)) -> List[GameInfo]:
+async def games(limit: int = 10, db: Session = Depends(get_db)) -> List[GameInfoWithPrediction]:
     """
     Десят ближайших игр
     """
-    # return get_game_by_limit(limit).to_dict('records')
-    return db.query(GameInfoEntity).all()
+    # today = datetime.now().date()
+    # Сезон в EPL уже закончен, код работает если бы сегодня была дата 19.05.2024
+    today = datetime(2024, 5, 19)
+
+    return db.query(GameInfoEntity)\
+        .filter(GameInfoEntity.date >= today)\
+        .order_by(GameInfoEntity.date.desc())\
+        .limit(limit).all()
 
 
 @app.get('/games-today')
@@ -65,47 +69,82 @@ async def games_today(db: Session = Depends(get_db)) -> List[GameInfo]:
     """
     Игры сегодня
     """
-    # return get_games_today().to_dict('records')
-    new_entity = GameInfoEntity(home='11', away='22', ground='33')
+    # today = datetime.now().date()
+    # Сезон в EPL уже закончен, код работает если бы сегодня была дата 19.05.2024
+    today = datetime(2024, 5, 19)
+    next_day = today + timedelta(days=1)
 
-    db.add(new_entity)
+    return db.query(GameInfoEntity)\
+        .filter(GameInfoEntity.date >= today, GameInfoEntity.date < next_day) \
+        .order_by(GameInfoEntity.date.desc()) \
+        .all()
 
-    db.commit()
 
 @app.get('/games-tomorrow')
 @cache(expire=DEFAULT_CACHE_TTL)
-async def games_tomorrow() -> List[GameInfo]:
+async def games_tomorrow(db: Session = Depends(get_db)) -> List[GameInfo]:
     """
     Игры завтра
     """
-    return get_games_tomorrow().to_dict('records')
+    # today = datetime.now().date()
+    # Сезон в EPL уже закончен, код работает если бы сегодня была дата 19.05.2024
+    today = datetime(2024, 5, 19)
+    next_day = today + timedelta(days=1)
+
+    return db.query(GameInfoEntity)\
+        .filter(GameInfoEntity.date >= next_day, GameInfoEntity.date < next_day) \
+        .order_by(GameInfoEntity.date.desc()) \
+        .all()
 
 
 @app.get('/games-predict')
 @cache(expire=DEFAULT_CACHE_TTL)
-async def games_predict() -> List[GameInfoWithPrediction]:
+async def games_predict(db: Session = Depends(get_db)) -> List[GameInfoWithPrediction]:
     """
     Предсказания ближайших 10 игр
     """
-    return get_games_predict().to_dict('records')
+    # today = datetime.now().date()
+    # Сезон в EPL уже закончен, код работает если бы сегодня была дата 19.05.2024
+    today = datetime(2024, 5, 19)
+
+    return db.query(GameInfoEntity)\
+        .filter(GameInfoEntity.date >= today)\
+        .order_by(GameInfoEntity.date.desc())\
+        .all()
 
 
 @app.get('/games-today-predict')
 @cache(expire=DEFAULT_CACHE_TTL)
-async def games_today_predict() -> List[GameInfoWithPrediction]:
+async def games_today_predict(db: Session = Depends(get_db)) -> List[GameInfoWithPrediction]:
     """
     Предсказания игр сегодня
     """
-    return get_games_today_predict().to_dict('records')
+    # today = datetime.now().date()
+    # Сезон в EPL уже закончен, код работает если бы сегодня была дата 19.05.2024
+    today = datetime(2024, 5, 19)
+    next_day = today + timedelta(days=1)
+
+    return db.query(GameInfoEntity)\
+        .filter(GameInfoEntity.date >= today, GameInfoEntity.date < next_day) \
+        .order_by(GameInfoEntity.date.desc()) \
+        .all()
 
 
 @app.get('/games-tomorrow-predict')
 @cache(expire=DEFAULT_CACHE_TTL)
-async def games_tomorrow_predict() -> List[GameInfoWithPrediction]:
+async def games_tomorrow_predict(db: Session = Depends(get_db)) -> List[GameInfoWithPrediction]:
     """
     Предсказания игр на завтра
     """
-    return get_games_tomorrow_predict().to_dict('records')
+    # today = datetime.now().date()
+    # Сезон в EPL уже закончен, код работает если бы сегодня была дата 19.05.2024
+    today = datetime(2024, 5, 19)
+    next_day = today + timedelta(days=1)
+
+    return db.query(GameInfoEntity)\
+        .filter(GameInfoEntity.date >= next_day, GameInfoEntity.date < next_day) \
+        .order_by(GameInfoEntity.date.desc()) \
+        .all()
 
 
 @app.get('/stats')
