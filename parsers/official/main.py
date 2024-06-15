@@ -376,10 +376,6 @@ for id_s in tqdm(list(id_season['id'][:10])):
                 goalkippers['saves'].append(player.get('saves', None))
                 goalkippers['goalsConceded'].append(player.get('goalsConceded', None))
 
-                
-
-
-
         for official in response.json().get('officials', None):
             role = official.get('role', None)
             name = official['name']['display']
