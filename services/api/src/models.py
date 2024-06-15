@@ -2,14 +2,14 @@ from pydantic import BaseModel
 
 
 class GameInfo(BaseModel):
-    Home: str
-    Away: str
-    Ground: str
+    home: str
+    away: str
+    ground: str
 
 
 class GameInfoWithPrediction(GameInfo):
-    Predict: int
-    Proba: float
+    predict: int
+    proba: float
 
 
 class Favorite(BaseModel):

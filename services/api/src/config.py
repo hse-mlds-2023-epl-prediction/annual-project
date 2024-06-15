@@ -31,6 +31,12 @@ class Settings(BaseSettings):
     redis_host: str
     redis_port: int
 
+    db_host: str
+    db_port: str
+    db_user: str
+    db_password: str
+    db_name: str
+
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding='utf-8'
         )
