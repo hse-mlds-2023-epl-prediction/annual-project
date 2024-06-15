@@ -23,3 +23,7 @@ pandas
 catboost
 redis
 fastapi-cache2[redis]
+sqlalchemy
+databases
+psycopg2-binary
+asyncpg

@@ -8,7 +8,7 @@ def format_games_table(json):
     table.align['Ground'] = 'r'
 
     for item in json:
-        table.add_row([item['Home'], item['Away'], item['Ground']])
+        table.add_row([item['home'], item['away'], item['ground']])
 
     return table
 
@@ -20,10 +20,10 @@ def format_games_with_predict_table(json):
 
     for item in json:
         table.add_row(
-            [item['Home'],
-             item['Away'],
-             item['Predict'],
-             f'{item["Proba"]:.2f}'
+            [item['home'],
+             item['away'],
+             item['predict'],
+             f'{item["proba"][item["predict"]]:.2f}'
              ]
             )
 

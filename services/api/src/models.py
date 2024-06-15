@@ -1,15 +1,17 @@
+from datetime import datetime
 from pydantic import BaseModel
 
 
 class GameInfo(BaseModel):
-    Home: str
-    Away: str
-    Ground: str
+    home: str
+    away: str
+    ground: str
+    date: datetime
 
 
 class GameInfoWithPrediction(GameInfo):
-    Predict: int
-    Proba: float
+    predict: int
+    proba: list[float]
 
 
 class Favorite(BaseModel):
