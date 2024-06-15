@@ -1,10 +1,12 @@
-num_seasons = 12
+num_seasons = 10
 
 mlflow_exp = {
     'df_base': '6',
-    'optuna': '7'
-
+    'optuna': '7',
+    'model': '8'
 }
+
+num_trial = 12
 
 headers = {
     'authority': 'footballapi.pulselive.com',

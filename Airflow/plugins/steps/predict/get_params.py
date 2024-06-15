@@ -11,7 +11,7 @@ from sklearn.metrics import make_scorer, accuracy_score, f1_score
 from sklearn.model_selection import TimeSeriesSplit
 from catboost import CatBoostClassifier
 #from optuna.integration.mlflow import MLflowCallback
-from steps.src.config import mlflow_exp
+from steps.src.config import mlflow_exp, num_trial
 from steps.src.app import pca_pipeline , cat_features, compute_class_weights
 
 load_dotenv()
@@ -40,15 +40,19 @@ def get_data(**kwargs):
 def objective(trial, X, y, tscv, cat_cols):
         
     param = {
-            "learning_rate": trial.suggest_float("learning_rate", 0.001, 0.1, log=True),
-            "depth": trial.suggest_int("depth", 1, 8),
-            "l2_leaf_reg": trial.suggest_float("l2_leaf_reg", 0.1, 5),
-            "random_strength": trial.suggest_float("random_strength", 0.1, 5),
-            "loss_function": "MultiClass",
-            "task_type": "CPU",
-            "random_seed": 0,
-            "verbose": False,
-            }
+        "iterations": trial.suggest_int("iterations", 500, 2000),
+        "depth": trial.suggest_int("depth", 1, 7),
+        "learning_rate": trial.suggest_float("learning_rate", 0.001, 0.1, log=True),
+        "l2_leaf_reg": trial.suggest_float("l2_leaf_reg", 1, 10),
+        "random_strength": trial.suggest_float("random_strength", 1, 20),
+        "bagging_temperature": trial.suggest_float("bagging_temperature", 0, 1),
+        "border_count": trial.suggest_int("border_count", 32, 255),
+        "leaf_estimation_iterations": trial.suggest_int("leaf_estimation_iterations", 1, 10),
+        "loss_function": "MultiClass",
+        "task_type": "CPU",
+        "random_seed": 0,
+        "verbose": False,
+    }
     
     model = CatBoostClassifier(**param)
     preds = []
@@ -69,11 +73,12 @@ def objective(trial, X, y, tscv, cat_cols):
             preds.extend(pred.reshape(-1).tolist())
             tests.extend(y_test.tolist())
 
-        f1 = f1_score(y_test, pred, average='weighted')
+        f1 = f1_score(tests, preds, average='weighted')
         accuracy = np.mean(np.array(preds) == np.array(tests))
-        mlflow.log_params(param_boost)
+        mlflow.log_params(param)
         mlflow.log_metric('accuracy', accuracy)
         mlflow.log_metric('f1_score', f1)
+        mlflow.log_metric('len_preds', len(preds))
          
     return f1
     
@@ -84,12 +89,11 @@ def main(**kwargs):
     df = pickle.loads(df_pickle)
         
     cat_cols = cat_features(df)
-    num_cols = list(set(df.columns.tolist()) - set(cat_cols))
-    
+
     df[cat_cols] = df[cat_cols].astype(str)
     y = df['team_1_hue']
     df.drop(['team_1_hue', 'match_id'], axis=1, inplace=True)
     
     tscv = TimeSeriesSplit(n_splits=19 , test_size=20)
     study = optuna.create_study(direction='maximize')
-    study.optimize(lambda trial: objective(trial, df, y, tscv, cat_cols), n_trials=50)
+    study.optimize(lambda trial: objective(trial, df, y, tscv, cat_cols), n_trials=num_trial)

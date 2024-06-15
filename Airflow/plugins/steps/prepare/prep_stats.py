@@ -6,7 +6,7 @@ from dateutil import parser
 from collections import defaultdict
 from time import sleep
 from steps.src.features import col_club_stat
-from steps.src.config import uri, headers, conn_id, num_seasons, del_game_col, mlflow_exp
+from steps.src.config import num_trial, del_game_col, mlflow_exp
 from steps.src.app import pars_dictline, pars_dictfeature
 from steps.src.model_table import table_games
 from airflow.providers.postgres.hooks.postgres import PostgresHook
@@ -263,11 +263,14 @@ def get_df(**kwargs):
     # Соединяем численные признаки с базовой инфой
     df_1 = df[feature_list_games].merge(df_num_mean,
                                         left_on='teams_team_1_name',
-                                        right_on='club_name')
+                                        right_on='club_name',
+                                        how='left')
     df_1 = df_1.merge(df_num_mean,
                       left_on='teams_team_2_name',
                       right_on='club_name',
-                      suffixes=('_team_1', '_team_2'))
+                      suffixes=('_team_1', '_team_2'),
+                      how='left')
+    
     df_1.drop(['club_name_team_1', 'club_name_team_2'], axis=1, inplace=True)
     
     # Добавляем лаги
@@ -452,14 +455,15 @@ def get_df(**kwargs):
                           left_on=['teams_team_1_name', 'teams_team_2_name', 'kickoff_label'],
                           right_on=['home_name', 'away_name', 'date'])
     
-    drp_list = ['home_name', 'away_name', 'date', 'kickoff_label', 'result_team_1']    
+    drp_list = ['home_name', 'away_name', 'date', 'kickoff_label', 'result_team_1', 'result_team_2']    
     df_general.drop(drp_list, axis=1, inplace=True)
     df_general = df_general[df_general['gameweek_compSeason_label'] != df_general['gameweek_compSeason_label'].min()]
     df_general.sort_values(by=['match_id'], inplace=True)
     
     duplicate_columns = ['month.1', 'day_week.1', 'hour.1', 'ground_id.1']
     df_general.drop(columns=duplicate_columns, inplace=True, errors='ignore')
-
+    df_general.drop_duplicates(inplace=True)
+    
     df_pickle = pickle.dumps(df_general)
     df_base64 = base64.b64encode(df_pickle).decode('utf-8')
     kwargs['ti'].xcom_push(key='get_df', value=df_base64)
