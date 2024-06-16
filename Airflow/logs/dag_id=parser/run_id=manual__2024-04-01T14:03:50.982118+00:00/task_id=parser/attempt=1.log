@@ -1,0 +1,37 @@
+[2024-04-01T14:03:51.913+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: parser.parser manual__2024-04-01T14:03:50.982118+00:00 [queued]>
+[2024-04-01T14:03:51.917+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: parser.parser manual__2024-04-01T14:03:50.982118+00:00 [queued]>
+[2024-04-01T14:03:51.917+0000] {taskinstance.py:1361} INFO - Starting attempt 1 of 1
+[2024-04-01T14:03:51.923+0000] {taskinstance.py:1382} INFO - Executing <Task(PythonOperator): parser> on 2024-04-01 14:03:50.982118+00:00
+[2024-04-01T14:03:51.929+0000] {standard_task_runner.py:57} INFO - Started process 99 to run task
+[2024-04-01T14:03:51.931+0000] {standard_task_runner.py:84} INFO - Running: ['***', 'tasks', 'run', 'parser', 'parser', 'manual__2024-04-01T14:03:50.982118+00:00', '--job-id', '72', '--raw', '--subdir', 'DAGS_FOLDER/parser.py', '--cfg-path', '/tmp/tmp2cdszua9']
+[2024-04-01T14:03:51.931+0000] {standard_task_runner.py:85} INFO - Job 72: Subtask parser
+[2024-04-01T14:03:52.092+0000] {task_command.py:416} INFO - Running <TaskInstance: parser.parser manual__2024-04-01T14:03:50.982118+00:00 [running]> on host 2ed000e9afbd
+[2024-04-01T14:03:52.133+0000] {taskinstance.py:1662} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='parser' AIRFLOW_CTX_TASK_ID='parser' AIRFLOW_CTX_EXECUTION_DATE='2024-04-01T14:03:50.982118+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2024-04-01T14:03:50.982118+00:00'
+[2024-04-01T14:03:52.273+0000] {taskinstance.py:1937} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.10/site-packages/requests/models.py", line 971, in json
+    return complexjson.loads(self.text, **kwargs)
+  File "/usr/local/lib/python3.10/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+  File "/usr/local/lib/python3.10/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/usr/local/lib/python3.10/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.10/site-packages/airflow/operators/python.py", line 192, in execute
+    return_value = self.execute_callable()
+  File "/home/airflow/.local/lib/python3.10/site-packages/airflow/operators/python.py", line 209, in execute_callable
+    return self.python_callable(*self.op_args, **self.op_kwargs)
+  File "/opt/airflow/plugins/steps/pars.py", line 33, in pars
+    while len(response.json()['content']) > 0:
+  File "/home/airflow/.local/lib/python3.10/site-packages/requests/models.py", line 975, in json
+    raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)
+requests.exceptions.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[2024-04-01T14:03:52.279+0000] {taskinstance.py:1400} INFO - Marking task as FAILED. dag_id=parser, task_id=parser, execution_date=20240401T140350, start_date=20240401T140351, end_date=20240401T140352
+[2024-04-01T14:03:52.291+0000] {standard_task_runner.py:104} ERROR - Failed to execute job 72 for task parser (Expecting value: line 1 column 1 (char 0); 99)
+[2024-04-01T14:03:52.343+0000] {local_task_job_runner.py:228} INFO - Task exited with return code 1
+[2024-04-01T14:03:52.495+0000] {taskinstance.py:2778} INFO - 0 downstream tasks scheduled from follow-on schedule check

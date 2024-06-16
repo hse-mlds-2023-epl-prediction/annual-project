@@ -1,0 +1,32 @@
+[2024-03-14T17:29:26.413+0000] {processor.py:157} INFO - Started process (PID=65) to work on /home/airflow/.local/lib/python3.10/site-packages/airflow/example_dags/example_external_task_marker_dag.py
+[2024-03-14T17:29:26.414+0000] {processor.py:829} INFO - Processing file /home/airflow/.local/lib/python3.10/site-packages/airflow/example_dags/example_external_task_marker_dag.py for tasks to queue
+[2024-03-14T17:29:26.415+0000] {logging_mixin.py:154} INFO - [2024-03-14T17:29:26.415+0000] {dagbag.py:536} INFO - Filling up the DagBag from /home/airflow/.local/lib/python3.10/site-packages/airflow/example_dags/example_external_task_marker_dag.py
+[2024-03-14T17:29:26.420+0000] {processor.py:839} INFO - DAG(s) dict_keys(['example_external_task_marker_parent', 'example_external_task_marker_child']) retrieved from /home/airflow/.local/lib/python3.10/site-packages/airflow/example_dags/example_external_task_marker_dag.py
+[2024-03-14T17:29:26.485+0000] {logging_mixin.py:154} INFO - [2024-03-14T17:29:26.485+0000] {manager.py:499} INFO - Created Permission View: %s
+[2024-03-14T17:29:26.490+0000] {logging_mixin.py:154} INFO - [2024-03-14T17:29:26.490+0000] {manager.py:499} INFO - Created Permission View: %s
+[2024-03-14T17:29:26.493+0000] {logging_mixin.py:154} INFO - [2024-03-14T17:29:26.493+0000] {manager.py:499} INFO - Created Permission View: %s
+[2024-03-14T17:29:26.499+0000] {logging_mixin.py:154} INFO - [2024-03-14T17:29:26.499+0000] {manager.py:499} INFO - Created Permission View: %s
+[2024-03-14T17:29:26.502+0000] {logging_mixin.py:154} INFO - [2024-03-14T17:29:26.502+0000] {manager.py:499} INFO - Created Permission View: %s
+[2024-03-14T17:29:26.505+0000] {logging_mixin.py:154} INFO - [2024-03-14T17:29:26.505+0000] {manager.py:499} INFO - Created Permission View: %s
+[2024-03-14T17:29:26.505+0000] {logging_mixin.py:154} INFO - [2024-03-14T17:29:26.505+0000] {dag.py:2941} INFO - Sync 2 DAGs
+[2024-03-14T17:29:26.512+0000] {logging_mixin.py:154} INFO - [2024-03-14T17:29:26.512+0000] {dag.py:2963} INFO - Creating ORM DAG for example_external_task_marker_parent
+[2024-03-14T17:29:26.512+0000] {logging_mixin.py:154} INFO - [2024-03-14T17:29:26.512+0000] {dag.py:2963} INFO - Creating ORM DAG for example_external_task_marker_child
+[2024-03-14T17:29:26.512+0000] {logging_mixin.py:154} INFO - [2024-03-14T17:29:26.512+0000] {dag.py:3722} INFO - Setting next_dagrun for example_external_task_marker_child to None, run_after=None
+[2024-03-14T17:29:26.513+0000] {logging_mixin.py:154} INFO - [2024-03-14T17:29:26.513+0000] {dag.py:3722} INFO - Setting next_dagrun for example_external_task_marker_parent to None, run_after=None
+[2024-03-14T17:29:26.522+0000] {processor.py:179} INFO - Processing /home/airflow/.local/lib/python3.10/site-packages/airflow/example_dags/example_external_task_marker_dag.py took 0.111 seconds
+[2024-03-14T17:29:56.603+0000] {processor.py:157} INFO - Started process (PID=119) to work on /home/airflow/.local/lib/python3.10/site-packages/airflow/example_dags/example_external_task_marker_dag.py
+[2024-03-14T17:29:56.603+0000] {processor.py:829} INFO - Processing file /home/airflow/.local/lib/python3.10/site-packages/airflow/example_dags/example_external_task_marker_dag.py for tasks to queue
+[2024-03-14T17:29:56.605+0000] {logging_mixin.py:154} INFO - [2024-03-14T17:29:56.604+0000] {dagbag.py:536} INFO - Filling up the DagBag from /home/airflow/.local/lib/python3.10/site-packages/airflow/example_dags/example_external_task_marker_dag.py
+[2024-03-14T17:29:56.608+0000] {processor.py:839} INFO - DAG(s) dict_keys(['example_external_task_marker_child', 'example_external_task_marker_parent']) retrieved from /home/airflow/.local/lib/python3.10/site-packages/airflow/example_dags/example_external_task_marker_dag.py
+[2024-03-14T17:29:56.623+0000] {logging_mixin.py:154} INFO - [2024-03-14T17:29:56.623+0000] {dag.py:2941} INFO - Sync 2 DAGs
+[2024-03-14T17:29:56.631+0000] {logging_mixin.py:154} INFO - [2024-03-14T17:29:56.631+0000] {dag.py:3722} INFO - Setting next_dagrun for example_external_task_marker_child to None, run_after=None
+[2024-03-14T17:29:56.633+0000] {logging_mixin.py:154} INFO - [2024-03-14T17:29:56.632+0000] {dag.py:3722} INFO - Setting next_dagrun for example_external_task_marker_parent to None, run_after=None
+[2024-03-14T17:29:56.641+0000] {processor.py:179} INFO - Processing /home/airflow/.local/lib/python3.10/site-packages/airflow/example_dags/example_external_task_marker_dag.py took 0.040 seconds
+[2024-03-14T17:30:27.157+0000] {processor.py:157} INFO - Started process (PID=173) to work on /home/airflow/.local/lib/python3.10/site-packages/airflow/example_dags/example_external_task_marker_dag.py
+[2024-03-14T17:30:27.157+0000] {processor.py:829} INFO - Processing file /home/airflow/.local/lib/python3.10/site-packages/airflow/example_dags/example_external_task_marker_dag.py for tasks to queue
+[2024-03-14T17:30:27.158+0000] {logging_mixin.py:154} INFO - [2024-03-14T17:30:27.158+0000] {dagbag.py:536} INFO - Filling up the DagBag from /home/airflow/.local/lib/python3.10/site-packages/airflow/example_dags/example_external_task_marker_dag.py
+[2024-03-14T17:30:27.162+0000] {processor.py:839} INFO - DAG(s) dict_keys(['example_external_task_marker_parent', 'example_external_task_marker_child']) retrieved from /home/airflow/.local/lib/python3.10/site-packages/airflow/example_dags/example_external_task_marker_dag.py
+[2024-03-14T17:30:27.175+0000] {logging_mixin.py:154} INFO - [2024-03-14T17:30:27.175+0000] {dag.py:2941} INFO - Sync 2 DAGs
+[2024-03-14T17:30:27.183+0000] {logging_mixin.py:154} INFO - [2024-03-14T17:30:27.183+0000] {dag.py:3722} INFO - Setting next_dagrun for example_external_task_marker_child to None, run_after=None
+[2024-03-14T17:30:27.185+0000] {logging_mixin.py:154} INFO - [2024-03-14T17:30:27.185+0000] {dag.py:3722} INFO - Setting next_dagrun for example_external_task_marker_parent to None, run_after=None
+[2024-03-14T17:30:27.193+0000] {processor.py:179} INFO - Processing /home/airflow/.local/lib/python3.10/site-packages/airflow/example_dags/example_external_task_marker_dag.py took 0.038 seconds

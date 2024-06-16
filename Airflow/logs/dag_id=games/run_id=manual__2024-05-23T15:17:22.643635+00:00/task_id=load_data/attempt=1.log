@@ -1,0 +1,46 @@
+[2024-05-23T15:22:24.122+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2024-05-23T15:22:24.136+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: games.load_data manual__2024-05-23T15:17:22.643635+00:00 [queued]>
+[2024-05-23T15:22:24.141+0000] {taskinstance.py:2073} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: games.load_data manual__2024-05-23T15:17:22.643635+00:00 [queued]>
+[2024-05-23T15:22:24.141+0000] {taskinstance.py:2303} INFO - Starting attempt 1 of 1
+[2024-05-23T15:22:24.148+0000] {taskinstance.py:2327} INFO - Executing <Task(PythonOperator): load_data> on 2024-05-23 15:17:22.643635+00:00
+[2024-05-23T15:22:24.155+0000] {warnings.py:110} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:61: DeprecationWarning: This process (pid=142) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2024-05-23T15:22:24.155+0000] {standard_task_runner.py:63} INFO - Started process 144 to run task
+[2024-05-23T15:22:24.156+0000] {standard_task_runner.py:90} INFO - Running: ['***', 'tasks', 'run', 'games', 'load_data', 'manual__2024-05-23T15:17:22.643635+00:00', '--job-id', '659', '--raw', '--subdir', 'DAGS_FOLDER/get_main_games.py', '--cfg-path', '/tmp/tmp8hkiv4pl']
+[2024-05-23T15:22:24.157+0000] {standard_task_runner.py:91} INFO - Job 659: Subtask load_data
+[2024-05-23T15:22:24.185+0000] {task_command.py:426} INFO - Running <TaskInstance: games.load_data manual__2024-05-23T15:17:22.643635+00:00 [running]> on host b1f3179a8de2
+[2024-05-23T15:22:24.247+0000] {taskinstance.py:2644} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='games' AIRFLOW_CTX_TASK_ID='load_data' AIRFLOW_CTX_EXECUTION_DATE='2024-05-23T15:17:22.643635+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2024-05-23T15:17:22.643635+00:00'
+[2024-05-23T15:22:24.248+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2024-05-23T15:22:24.270+0000] {base.py:84} INFO - Using connection ID '***' for task execution.
+[2024-05-23T15:22:24.278+0000] {base.py:84} INFO - Using connection ID '***' for task execution.
+[2024-05-23T15:22:24.836+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2024-05-23T15:22:24.837+0000] {taskinstance.py:2890} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 465, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 432, in _execute_callable
+    return execute_callable(context=context, **execute_callable_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 400, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/operators/python.py", line 235, in execute
+    return_value = self.execute_callable()
+                   ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/operators/python.py", line 252, in execute_callable
+    return self.python_callable(*self.op_args, **self.op_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/airflow/plugins/steps/get_matches.py", line 171, in load_data
+    hook.insert_rows(
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/providers/common/sql/hooks/sql.py", line 573, in insert_rows
+    cur.execute(sql, values)
+psycopg2.errors.NumericValueOutOfRange: integer out of range
+
+[2024-05-23T15:22:24.843+0000] {taskinstance.py:1205} INFO - Marking task as FAILED. dag_id=games, task_id=load_data, execution_date=20240523T151722, start_date=20240523T152224, end_date=20240523T152224
+[2024-05-23T15:22:24.857+0000] {standard_task_runner.py:110} ERROR - Failed to execute job 659 for task load_data (integer out of range
+; 144)
+[2024-05-23T15:22:24.889+0000] {local_task_job_runner.py:240} INFO - Task exited with return code 1
+[2024-05-23T15:22:24.901+0000] {taskinstance.py:3482} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2024-05-23T15:22:24.901+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
