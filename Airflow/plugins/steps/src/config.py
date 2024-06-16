@@ -6,7 +6,7 @@ mlflow_exp = {
     'model': '8'
 }
 
-num_trial = 12
+num_trial = 10
 
 headers = {
     'authority': 'footballapi.pulselive.com',

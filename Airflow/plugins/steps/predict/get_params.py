@@ -41,7 +41,7 @@ def objective(trial, X, y, tscv, cat_cols):
         
     param = {
         "iterations": trial.suggest_int("iterations", 500, 2000),
-        "depth": trial.suggest_int("depth", 1, 7),
+        "depth": trial.suggest_int("depth", 2, 7),
         "learning_rate": trial.suggest_float("learning_rate", 0.001, 0.1, log=True),
         "l2_leaf_reg": trial.suggest_float("l2_leaf_reg", 1, 10),
         "random_strength": trial.suggest_float("random_strength", 1, 20),
@@ -73,14 +73,16 @@ def objective(trial, X, y, tscv, cat_cols):
             preds.extend(pred.reshape(-1).tolist())
             tests.extend(y_test.tolist())
 
-        f1 = f1_score(tests, preds, average='weighted')
+        f1_weighted = f1_score(tests, preds, average='weighted')
+        f1_macro = f1_score(tests, preds, average='macro')
         accuracy = np.mean(np.array(preds) == np.array(tests))
         mlflow.log_params(param)
         mlflow.log_metric('accuracy', accuracy)
-        mlflow.log_metric('f1_score', f1)
+        mlflow.log_metric('f1_weighted', f1_weighted)
+        mlflow.log_metric('f1_macro', f1_macro)
         mlflow.log_metric('len_preds', len(preds))
          
-    return f1
+    return f1_macro
     
 def main(**kwargs):
     ti = kwargs['ti']

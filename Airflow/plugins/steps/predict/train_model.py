@@ -56,7 +56,7 @@ def get_params(**kwargs):
     # get run_id with max f1
     df = mlflow.search_runs(experiment_ids=experiment_ids)
     df = df.sort_values(by='start_time', ascending=False).iloc[:num_trial, :]
-    df.sort_values(by='metrics.f1_score', ascending=False, inplace=True)
+    df.sort_values(by='metrics.f1_macro', ascending=False, inplace=True)
     run_id = df.iloc[0, 0]
     print(f'run_id: {run_id}')
     # get params
