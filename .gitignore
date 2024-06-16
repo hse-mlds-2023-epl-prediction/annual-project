@@ -11,6 +11,8 @@
 .idea
 Airflow/.env
 Airflow/logs
+Airflow/dags/__pycache__
+Airflow/plugins/__pycache__
 *logs
 *env
 *pycache*
